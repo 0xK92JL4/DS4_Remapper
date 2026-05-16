@@ -23,14 +23,10 @@ int main()
         constexpr int MAX_EPOLL_EVENTS = 4;
         struct epoll_event returned_events[MAX_EPOLL_EVENTS];
 
-        std::cout << "Engine running smoothly in structural C++..." << std::endl;
-
-        // Initialize steady timepoints
         auto last_time = std::chrono::steady_clock::now();
 
         while (true)
         {
-            // Adaptive polling latency switch
             int timeout_ms = (std::abs(axis_lx - 127) > Config::DEADZONE || 
                               std::abs(axis_ly - 127) > Config::DEADZONE) ? 2 : 10;
 
@@ -69,16 +65,13 @@ int main()
                 }
             }
 
-            // Calculate precise delta time fraction
             auto current_time = std::chrono::steady_clock::now();
             std::chrono::duration<float, std::milli> elapsed = current_time - last_time;
             float dt = elapsed.count();
             last_time = current_time;
 
-            // Safety limit: prevents huge physics jumps if system stutters
             if (dt > 100.0f) dt = 100.0f; 
 
-            // Inject updates scaled cleanly by delta-time
             mouse.Move(axis_lx - 127, axis_ly - 127, dt);
             mouse.Scroll(axis_rx - 127, axis_ry - 127, dt);
         }
