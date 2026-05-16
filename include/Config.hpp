@@ -2,21 +2,23 @@
 #include <unordered_map>
 #include <linux/input.h>
 
-namespace Config
-{
+namespace Config {
     constexpr int DEADZONE = 20;
     constexpr int MAX_AXIS_RANGE = 127;
-    constexpr float MOUSE_SENSITIVITY = 2.0f;
-    
-    constexpr int MAX_INTERVAL_MS = 250;
-    constexpr int MIN_INTERVAL_MS = 35;
+
+    // Sensitivities calibrated for millisecond delta-time tracking
+    constexpr float MOUSE_SENS_X = 1.0f;
+    constexpr float MOUSE_SENS_Y = 1.0f;
+
+    constexpr float SCROLL_SENS_X = 0.035f; 
+    constexpr float SCROLL_SENS_Y = 0.020f; 
 
     const char* const DS4_DEVICE = "/dev/input/event21";
     const char* const TOUCHPAD_DEVICE = "/dev/input/event23";
 
     const std::unordered_map<int, int> ButtonMap = {
-        { BTN_SOUTH,  BTN_LEFT },   // DS4 Cross      -> Mouse Left Click
-        { BTN_EAST,   BTN_RIGHT },  // DS4 Circle     -> Mouse Right Click
-        { BTN_NORTH,  BTN_MIDDLE }, // DS4 Triangle   -> Mouse Middle Click
+        { BTN_SOUTH,  BTN_LEFT },
+        { BTN_EAST,   BTN_RIGHT },
+        { BTN_NORTH,  BTN_MIDDLE },
     };
 }
