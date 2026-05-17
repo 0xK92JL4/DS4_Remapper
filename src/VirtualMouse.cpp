@@ -5,7 +5,7 @@
 /*│  By: 0xK92JL4                                               ▒▒▒▒          │*/
 /*│                                                           ▒▒▒▒▒▒▒▒        │*/
 /*│  Created: 2026/05/17 00:59:17 by 0xK92JL4                 ▒▒▒▒▒▒▒▒        │*/
-/*│  Updated: 2026/05/17 13:44:05 by 0xK92JL4                 ▒▒    ▒▒        │*/
+/*│  Updated: 2026/05/17 23:19:05 by 0xK92JL4                 ▒▒    ▒▒        │*/
 /*│                                                                           │*/
 /*└───────────────────────────────────────────────────────────────────────────┘*/
 
@@ -14,6 +14,10 @@
 
 #include <cmath>
 #include <stdexcept>
+
+/*┌───────────────────────────────────────────────────────────────────────────┐*/
+/*│                         Constructor/Destructor                            │*/
+/*└───────────────────────────────────────────────────────────────────────────┘*/
 
 VirtualMouse::VirtualMouse()
 {
@@ -42,11 +46,19 @@ VirtualMouse::~VirtualMouse()
     if (uidev) libevdev_uinput_destroy(uidev);
 }
 
+/*┌───────────────────────────────────────────────────────────────────────────┐*/
+/*│                                Private                                    │*/
+/*└───────────────────────────────────────────────────────────────────────────┘*/
+
 void VirtualMouse::Emit(unsigned int type, unsigned int code, int value)
 {
     libevdev_uinput_write_event(uidev, type, code, value);
     libevdev_uinput_write_event(uidev, EV_SYN, SYN_REPORT, 0);
 }
+
+/*┌───────────────────────────────────────────────────────────────────────────┐*/
+/*│                                Public                                     │*/
+/*└───────────────────────────────────────────────────────────────────────────┘*/
 
 void VirtualMouse::SendButton(int virtual_button_code, int value)
 {

@@ -5,7 +5,7 @@
 /*│  By: 0xK92JL4                                               ▒▒▒▒          │*/
 /*│                                                           ▒▒▒▒▒▒▒▒        │*/
 /*│  Created: 2026/05/17 00:58:17 by 0xK92JL4                 ▒▒▒▒▒▒▒▒        │*/
-/*│  Updated: 2026/05/17 00:58:20 by 0xK92JL4                 ▒▒    ▒▒        │*/
+/*│  Updated: 2026/05/17 23:14:26 by 0xK92JL4                 ▒▒    ▒▒        │*/
 /*│                                                                           │*/
 /*└───────────────────────────────────────────────────────────────────────────┘*/
 
@@ -17,13 +17,13 @@
 
 class DeviceManager
 {
+	private:
+		int epoll_fd = -1;
+
 	public:
 		DeviceManager();
 		~DeviceManager();
 
 		void AddDevice(InputDevice* device);
 		int Wait(struct epoll_event* events, int max_events, int timeout_ms);
-
-	private:
-		int epoll_fd = -1;
 };
