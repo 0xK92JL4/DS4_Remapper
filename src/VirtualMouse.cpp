@@ -1,5 +1,17 @@
+/*┌───────────────────────────────────────────────────────────────────────────┐*/
+/*│                                                                           │*/
+/*│  VirtualMouse.cpp                                       ▒▒▒▒    ▒▒▒▒      │*/
+/*│                                                         ▒▒▒▒    ▒▒▒▒      │*/
+/*│  By: 0xK92JL4                                               ▒▒▒▒          │*/
+/*│                                                           ▒▒▒▒▒▒▒▒        │*/
+/*│  Created: 2026/05/17 00:59:17 by 0xK92JL4                 ▒▒▒▒▒▒▒▒        │*/
+/*│  Updated: 2026/05/17 13:44:05 by 0xK92JL4                 ▒▒    ▒▒        │*/
+/*│                                                                           │*/
+/*└───────────────────────────────────────────────────────────────────────────┘*/
+
 #include "VirtualMouse.hpp"
 #include "Config.hpp"
+
 #include <cmath>
 #include <stdexcept>
 
@@ -41,73 +53,20 @@ void VirtualMouse::SendButton(int virtual_button_code, int value)
     Emit(EV_KEY, virtual_button_code, value);
 }
 
-void VirtualMouse::Move(int raw_dx, int raw_dy, float dt)
+void VirtualMouse::Move(int dx, int dy)
 {
-    int move_x = 0, move_y = 0;
+	if (dx != 0) libevdev_uinput_write_event(uidev, EV_REL, REL_X, dx);
+	if (dy != 0) libevdev_uinput_write_event(uidev, EV_REL, REL_Y, dy);
 
-    if (std::abs(raw_dx) > Config::DEADZONE)
-	{
-        float push_ratio = static_cast<float>(raw_dx - (raw_dx > 0 ? Config::DEADZONE : -Config::DEADZONE)) / (Config::MAX_AXIS_RANGE - Config::DEADZONE);
-        mouse_acc_x += push_ratio * Config::MOUSE_SENS_X * dt;
-    }
-	else
-	{
-        mouse_acc_x = 0.0f;
-    }
-
-    if (std::abs(raw_dy) > Config::DEADZONE)
-	{
-        float push_ratio = static_cast<float>(raw_dy - (raw_dy > 0 ? Config::DEADZONE : -Config::DEADZONE)) / (Config::MAX_AXIS_RANGE - Config::DEADZONE);
-        mouse_acc_y += push_ratio * Config::MOUSE_SENS_Y * dt;
-    }
-	else
-	{
-        mouse_acc_y = 0.0f;
-    }
-
-    if (std::abs(static_cast<int>(mouse_acc_x)) >= 1) { move_x = static_cast<int>(mouse_acc_x); mouse_acc_x -= move_x; }
-    if (std::abs(static_cast<int>(mouse_acc_y)) >= 1) { move_y = static_cast<int>(mouse_acc_y); mouse_acc_y -= move_y; }
-
-    if (move_x != 0) libevdev_uinput_write_event(uidev, EV_REL, REL_X, move_x);
-    if (move_y != 0) libevdev_uinput_write_event(uidev, EV_REL, REL_Y, move_y);
-    if (move_x != 0 || move_y != 0)
-	{
-        libevdev_uinput_write_event(uidev, EV_SYN, SYN_REPORT, 0);
-    }
+	if (dx != 0 || dy != 0)
+		libevdev_uinput_write_event(uidev, EV_SYN, SYN_REPORT, 0);
 }
 
-void VirtualMouse::Scroll(int raw_rx, int raw_ry, float dt)
+void VirtualMouse::Scroll(int sx, int sy)
 {
-    int scroll_x = 0, scroll_y = 0;
+	if (sx != 0) libevdev_uinput_write_event(uidev, EV_REL, REL_HWHEEL, sx);
+	if (sy != 0) libevdev_uinput_write_event(uidev, EV_REL, REL_WHEEL, -sy);
 
-    if (std::abs(raw_rx) > Config::DEADZONE)
-	{
-        float push_ratio = static_cast<float>(raw_rx - (raw_rx > 0 ? Config::DEADZONE : -Config::DEADZONE)) / (Config::MAX_AXIS_RANGE - Config::DEADZONE);
-        scroll_acc_x += push_ratio * Config::SCROLL_SENS_X * dt;
-    }
-	else
-	{
-        scroll_acc_x = 0.0f;
-    }
-
-    if (std::abs(raw_ry) > Config::DEADZONE)
-	{
-        float push_ratio = static_cast<float>(raw_ry - (raw_ry > 0 ? Config::DEADZONE : -Config::DEADZONE)) / (Config::MAX_AXIS_RANGE - Config::DEADZONE);
-        scroll_acc_y += push_ratio * Config::SCROLL_SENS_Y * dt;
-    }
-	else
-	{
-        scroll_acc_y = 0.0f;
-    }
-
-    if (std::abs(static_cast<int>(scroll_acc_x)) >= 1) { scroll_x = static_cast<int>(scroll_acc_x); scroll_acc_x -= scroll_x; }
-    if (std::abs(static_cast<int>(scroll_acc_y)) >= 1) { scroll_y = static_cast<int>(scroll_acc_y); scroll_acc_y -= scroll_y; }
-
-    if (scroll_x != 0) libevdev_uinput_write_event(uidev, EV_REL, REL_HWHEEL, scroll_x);
-    if (scroll_y != 0) libevdev_uinput_write_event(uidev, EV_REL, REL_WHEEL, -scroll_y); 
-    
-    if (scroll_x != 0 || scroll_y != 0)
-	{
-        libevdev_uinput_write_event(uidev, EV_SYN, SYN_REPORT, 0);
-    }
+	if (sx != 0 || sy != 0)
+		libevdev_uinput_write_event(uidev, EV_SYN, SYN_REPORT, 0);
 }

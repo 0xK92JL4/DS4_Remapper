@@ -1,29 +1,30 @@
 /*┌───────────────────────────────────────────────────────────────────────────┐*/
 /*│                                                                           │*/
-/*│  DeviceManager.hpp                                      ▒▒▒▒    ▒▒▒▒      │*/
+/*│  StickProcessor.hpp                                     ▒▒▒▒    ▒▒▒▒      │*/
 /*│                                                         ▒▒▒▒    ▒▒▒▒      │*/
 /*│  By: 0xK92JL4                                               ▒▒▒▒          │*/
 /*│                                                           ▒▒▒▒▒▒▒▒        │*/
-/*│  Created: 2026/05/17 00:58:17 by 0xK92JL4                 ▒▒▒▒▒▒▒▒        │*/
-/*│  Updated: 2026/05/17 00:58:20 by 0xK92JL4                 ▒▒    ▒▒        │*/
+/*│  Created: 2026/05/17 00:58:39 by 0xK92JL4                 ▒▒▒▒▒▒▒▒        │*/
+/*│  Updated: 2026/05/17 00:58:40 by 0xK92JL4                 ▒▒    ▒▒        │*/
 /*│                                                                           │*/
 /*└───────────────────────────────────────────────────────────────────────────┘*/
 
 #pragma once
 
-#include <vector>
-#include <sys/epoll.h>
-#include "InputDevice.hpp"
+struct Vec2
+{
+	int x;
+	int y;
+};
 
-class DeviceManager
+class StickProcessor
 {
 	public:
-		DeviceManager();
-		~DeviceManager();
-
-		void AddDevice(InputDevice* device);
-		int Wait(struct epoll_event* events, int max_events, int timeout_ms);
+		Vec2 Process(int raw_x, int raw_y,float sens_x, float sens_y, float dt);
 
 	private:
-		int epoll_fd = -1;
+		float _acc_x = 0.0f;
+		float _acc_y = 0.0f;
+
+		int ProcessAxis(int raw, float& accumulator, float sensitivity, float dt);
 };

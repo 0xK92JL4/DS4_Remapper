@@ -1,12 +1,25 @@
-#include <iostream>
-#include <chrono>
-#include <cmath>
+/*┌───────────────────────────────────────────────────────────────────────────┐*/
+/*│                                                                           │*/
+/*│  main.cpp                                               ▒▒▒▒    ▒▒▒▒      │*/
+/*│                                                         ▒▒▒▒    ▒▒▒▒      │*/
+/*│  By: 0xK92JL4                                               ▒▒▒▒          │*/
+/*│                                                           ▒▒▒▒▒▒▒▒        │*/
+/*│  Created: 2026/05/17 00:59:29 by 0xK92JL4                 ▒▒▒▒▒▒▒▒        │*/
+/*│  Updated: 2026/05/17 13:50:02 by 0xK92JL4                 ▒▒    ▒▒        │*/
+/*│                                                                           │*/
+/*└───────────────────────────────────────────────────────────────────────────┘*/
+
 #include "Config.hpp"
 #include "InputDevice.hpp"
 #include "DeviceManager.hpp"
 #include "VirtualMouse.hpp"
+#include "StickProcessor.hpp"
 
-int main()
+#include <iostream>
+#include <chrono>
+#include <cmath>
+
+int main(void)
 {
     try
     {
@@ -16,6 +29,9 @@ int main()
         DeviceManager manager;
         manager.AddDevice(&ds4);
         manager.AddDevice(&touchpad);
+
+		StickProcessor mouse_stick;
+		StickProcessor scroll_stick;
 
         VirtualMouse mouse;
 
@@ -72,8 +88,26 @@ int main()
 
             if (dt > 100.0f) dt = 100.0f; 
 
-            mouse.Move(axis_lx - 127, axis_ly - 127, dt);
-            mouse.Scroll(axis_rx - 127, axis_ry - 127, dt);
+			Vec2 move =
+				mouse_stick.Process(
+					axis_lx - 127,
+					axis_ly - 127,
+					Config::MOUSE_SENS_X,
+					Config::MOUSE_SENS_Y,
+					dt
+				);
+
+			Vec2 scroll =
+				scroll_stick.Process(
+					axis_rx - 127,
+					axis_ry - 127,
+					Config::SCROLL_SENS_X,
+					Config::SCROLL_SENS_Y,
+					dt
+				);
+
+			mouse.Move(move.x, move.y);
+			mouse.Scroll(scroll.x, scroll.y);
         }
 
     }
