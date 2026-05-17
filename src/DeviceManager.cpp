@@ -5,7 +5,7 @@
 /*│  By: 0xK92JL4                                               ▒▒▒▒          │*/
 /*│                                                           ▒▒▒▒▒▒▒▒        │*/
 /*│  Created: 2026/05/17 00:58:56 by 0xK92JL4                 ▒▒▒▒▒▒▒▒        │*/
-/*│  Updated: 2026/05/17 00:58:59 by 0xK92JL4                 ▒▒    ▒▒        │*/
+/*│  Updated: 2026/05/17 14:47:04 by 0xK92JL4                 ▒▒    ▒▒        │*/
 /*│                                                                           │*/
 /*└───────────────────────────────────────────────────────────────────────────┘*/
 
@@ -34,6 +34,7 @@ DeviceManager::~DeviceManager()
 void DeviceManager::AddDevice(InputDevice* device)
 {
     if (!device) return;
+
     struct epoll_event ev_config{};
     ev_config.events = EPOLLIN;
     ev_config.data.ptr = device->GetEvdev();

@@ -1,30 +1,49 @@
 /*┌───────────────────────────────────────────────────────────────────────────┐*/
 /*│                                                                           │*/
-/*│  main.cpp                                               ▒▒▒▒    ▒▒▒▒      │*/
+/*│  EventLoop.hpp                                          ▒▒▒▒    ▒▒▒▒      │*/
 /*│                                                         ▒▒▒▒    ▒▒▒▒      │*/
 /*│  By: 0xK92JL4                                               ▒▒▒▒          │*/
 /*│                                                           ▒▒▒▒▒▒▒▒        │*/
-/*│  Created: 2026/05/17 00:59:29 by 0xK92JL4                 ▒▒▒▒▒▒▒▒        │*/
-/*│  Updated: 2026/05/17 23:07:27 by 0xK92JL4                 ▒▒    ▒▒        │*/
+/*│  Created: 2026/05/17 23:00:29 by 0xK92JL4                 ▒▒▒▒▒▒▒▒        │*/
+/*│  Updated: 2026/05/17 23:00:41 by 0xK92JL4                 ▒▒    ▒▒        │*/
 /*│                                                                           │*/
 /*└───────────────────────────────────────────────────────────────────────────┘*/
 
-#include "EventLoop.hpp"
+#pragma once
 
-#include <iostream>
+#include "InputDevice.hpp"
+#include "DeviceManager.hpp"
+#include "StickProcessor.hpp"
+#include "VirtualMouse.hpp"
 
-int main(void)
+#include <chrono>
+#include <sys/epoll.h>
+
+class EventLoop
 {
-	try
-	{
-		EventLoop loop;
-		loop.Run();
-	}
-	catch (const std::exception& ex)
-	{
-		std::cerr << ex.what() << std::endl;
-		return EXIT_FAILURE;
-	}
+	public:
+		EventLoop();
 
-	return EXIT_SUCCESS;
-}
+		void Run();
+
+	private:
+		InputDevice ds4;
+		InputDevice touchpad;
+
+		DeviceManager manager;
+
+		StickProcessor mouse_stick;
+		StickProcessor scroll_stick;
+
+		VirtualMouse mouse;
+
+		int axis_lx = 127;
+		int axis_ly = 127;
+		int axis_rx = 127;
+		int axis_ry = 127;
+
+		static constexpr int MAX_EPOLL_EVENTS = 4;
+		struct epoll_event returned_events[MAX_EPOLL_EVENTS];
+
+		std::chrono::steady_clock::time_point last_time;
+};
