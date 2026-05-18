@@ -5,7 +5,7 @@
 /*│  By: 0xK92JL4                                               ▒▒▒▒          │*/
 /*│                                                           ▒▒▒▒▒▒▒▒        │*/
 /*│  Created: 2026/05/17 23:00:54 by 0xK92JL4                 ▒▒▒▒▒▒▒▒        │*/
-/*│  Updated: 2026/05/18 23:03:59 by 0xK92JL4                 ▒▒    ▒▒        │*/
+/*│  Updated: 2026/05/18 23:27:51 by 0xK92JL4                 ▒▒    ▒▒        │*/
 /*│                                                                           │*/
 /*└───────────────────────────────────────────────────────────────────────────┘*/
 
@@ -96,8 +96,8 @@ void EventLoop::Run()
 
 		Vec2 move =
 			_mouse_stick.Process(
-				_axis_lx - 127,
-				_axis_ly - 127,
+				_axis_lx - Config::HALF_AXIS_RANGE,
+				_axis_ly - Config::HALF_AXIS_RANGE,
 				Config::MOUSE_SENS_X,
 				Config::MOUSE_SENS_Y,
 				dt
@@ -105,8 +105,8 @@ void EventLoop::Run()
 
 		Vec2 scroll =
 			_scroll_stick.Process(
-				_axis_rx - 127,
-				_axis_ry - 127,
+				_axis_rx - Config::HALF_AXIS_RANGE,
+				_axis_ry - Config::HALF_AXIS_RANGE,
 				Config::SCROLL_SENS_X,
 				Config::SCROLL_SENS_Y,
 				dt

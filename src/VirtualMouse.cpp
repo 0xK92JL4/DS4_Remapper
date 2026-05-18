@@ -5,7 +5,7 @@
 /*│  By: 0xK92JL4                                               ▒▒▒▒          │*/
 /*│                                                           ▒▒▒▒▒▒▒▒        │*/
 /*│  Created: 2026/05/17 00:59:17 by 0xK92JL4                 ▒▒▒▒▒▒▒▒        │*/
-/*│  Updated: 2026/05/18 22:58:44 by 0xK92JL4                 ▒▒    ▒▒        │*/
+/*│  Updated: 2026/05/18 23:13:10 by 0xK92JL4                 ▒▒    ▒▒        │*/
 /*│                                                                           │*/
 /*└───────────────────────────────────────────────────────────────────────────┘*/
 
@@ -35,7 +35,9 @@ VirtualMouse::VirtualMouse()
     libevdev_enable_event_code(vdev, EV_KEY, BTN_RIGHT, nullptr);
     libevdev_enable_event_code(vdev, EV_KEY, BTN_MIDDLE, nullptr);
 
-    int rc = libevdev_uinput_create_from_device(vdev, LIBEVDEV_UINPUT_OPEN_MANAGED, &_uidev);
+    int rc = libevdev_uinput_create_from_device(
+				vdev, LIBEVDEV_UINPUT_OPEN_MANAGED, &_uidev);
+
     libevdev_free(vdev);
 
     if (rc < 0) throw std::runtime_error("Failed to create uinput device context.");

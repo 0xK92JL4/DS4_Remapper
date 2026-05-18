@@ -5,7 +5,7 @@
 /*│  By: 0xK92JL4                                               ▒▒▒▒          │*/
 /*│                                                           ▒▒▒▒▒▒▒▒        │*/
 /*│  Created: 2026/05/17 00:58:04 by 0xK92JL4                 ▒▒▒▒▒▒▒▒        │*/
-/*│  Updated: 2026/05/17 23:21:48 by 0xK92JL4                 ▒▒    ▒▒        │*/
+/*│  Updated: 2026/05/18 23:27:28 by 0xK92JL4                 ▒▒    ▒▒        │*/
 /*│                                                                           │*/
 /*└───────────────────────────────────────────────────────────────────────────┘*/
 
@@ -17,7 +17,7 @@
 namespace Config
 {
     constexpr int DEADZONE = 20;
-    constexpr int MAX_AXIS_RANGE = 127;
+    constexpr int HALF_AXIS_RANGE = 127;
 
     constexpr float MOUSE_SENS_X = 1.0f;
     constexpr float MOUSE_SENS_Y = 1.0f;

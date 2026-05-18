@@ -5,7 +5,7 @@
 /*│  By: 0xK92JL4                                               ▒▒▒▒          │*/
 /*│                                                           ▒▒▒▒▒▒▒▒        │*/
 /*│  Created: 2026/05/17 00:57:52 by 0xK92JL4                 ▒▒▒▒▒▒▒▒        │*/
-/*│  Updated: 2026/05/17 23:18:12 by 0xK92JL4                 ▒▒    ▒▒        │*/
+/*│  Updated: 2026/05/18 23:27:12 by 0xK92JL4                 ▒▒    ▒▒        │*/
 /*│                                                                           │*/
 /*└───────────────────────────────────────────────────────────────────────────┘*/
 
@@ -32,7 +32,7 @@ int StickProcessor::ProcessAxis(
 	}
 
 	float push_ratio = static_cast<float>(raw - (raw > 0 ? Config::DEADZONE : -Config::DEADZONE))
-		/ (Config::MAX_AXIS_RANGE - Config::DEADZONE);
+		/ (Config::HALF_AXIS_RANGE - Config::DEADZONE);
 
 	accumulator += push_ratio * sensitivity * dt;
 
