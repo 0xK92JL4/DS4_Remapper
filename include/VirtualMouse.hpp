@@ -5,7 +5,7 @@
 /*│  By: 0xK92JL4                                               ▒▒▒▒          │*/
 /*│                                                           ▒▒▒▒▒▒▒▒        │*/
 /*│  Created: 2026/05/17 00:58:46 by 0xK92JL4                 ▒▒▒▒▒▒▒▒        │*/
-/*│  Updated: 2026/05/17 23:13:02 by 0xK92JL4                 ▒▒    ▒▒        │*/
+/*│  Updated: 2026/05/18 22:58:06 by 0xK92JL4                 ▒▒    ▒▒        │*/
 /*│                                                                           │*/
 /*└───────────────────────────────────────────────────────────────────────────┘*/
 
@@ -16,7 +16,7 @@
 class VirtualMouse
 {
 	private:
-		struct libevdev_uinput* uidev = nullptr;
+		struct libevdev_uinput* _uidev = nullptr;
 
 		void Emit(unsigned int type, unsigned int code, int value);
 

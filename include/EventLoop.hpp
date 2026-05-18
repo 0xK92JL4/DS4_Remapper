@@ -5,7 +5,7 @@
 /*│  By: 0xK92JL4                                               ▒▒▒▒          │*/
 /*│                                                           ▒▒▒▒▒▒▒▒        │*/
 /*│  Created: 2026/05/17 23:00:29 by 0xK92JL4                 ▒▒▒▒▒▒▒▒        │*/
-/*│  Updated: 2026/05/17 23:12:32 by 0xK92JL4                 ▒▒    ▒▒        │*/
+/*│  Updated: 2026/05/18 23:01:16 by 0xK92JL4                 ▒▒    ▒▒        │*/
 /*│                                                                           │*/
 /*└───────────────────────────────────────────────────────────────────────────┘*/
 
@@ -22,23 +22,23 @@
 class EventLoop
 {
 	private:
-		InputDevice ds4;
-		InputDevice touchpad;
+		InputDevice		_ds4;
+		InputDevice		_touchpad;
 
-		DeviceManager manager;
+		DeviceManager	_manager;
 
-		StickProcessor mouse_stick;
-		StickProcessor scroll_stick;
+		StickProcessor	_mouse_stick;
+		StickProcessor	_scroll_stick;
 
-		VirtualMouse mouse;
+		VirtualMouse	_mouse;
 
-		int axis_lx = 127;
-		int axis_ly = 127;
-		int axis_rx = 127;
-		int axis_ry = 127;
+		int				_axis_lx = 127;
+		int				_axis_ly = 127;
+		int				_axis_rx = 127;
+		int				_axis_ry = 127;
 
-		static constexpr int MAX_EPOLL_EVENTS = 4;
-		struct epoll_event returned_events[MAX_EPOLL_EVENTS];
+		static constexpr int	MAX_EPOLL_EVENTS = 4;
+		struct epoll_event		_returned_events[MAX_EPOLL_EVENTS];
 
 		std::chrono::steady_clock::time_point last_time;
 

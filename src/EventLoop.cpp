@@ -5,7 +5,7 @@
 /*│  By: 0xK92JL4                                               ▒▒▒▒          │*/
 /*│                                                           ▒▒▒▒▒▒▒▒        │*/
 /*│  Created: 2026/05/17 23:00:54 by 0xK92JL4                 ▒▒▒▒▒▒▒▒        │*/
-/*│  Updated: 2026/05/17 23:16:02 by 0xK92JL4                 ▒▒    ▒▒        │*/
+/*│  Updated: 2026/05/18 23:03:59 by 0xK92JL4                 ▒▒    ▒▒        │*/
 /*│                                                                           │*/
 /*└───────────────────────────────────────────────────────────────────────────┘*/
 
@@ -20,11 +20,11 @@
 /*└───────────────────────────────────────────────────────────────────────────┘*/
 
 EventLoop::EventLoop()
-	: ds4(Config::DS4_DEVICE, false)
-	, touchpad(Config::TOUCHPAD_DEVICE, true)
+	: _ds4(Config::DS4_DEVICE, false)
+	, _touchpad(Config::TOUCHPAD_DEVICE, true)
 {
-	manager.AddDevice(&ds4);
-	manager.AddDevice(&touchpad);
+	_manager.AddDevice(&_ds4);
+	_manager.AddDevice(&_touchpad);
 
 	last_time = std::chrono::steady_clock::now();
 }
@@ -38,12 +38,12 @@ void EventLoop::Run()
 	while (true)
 	{
 		int timeout_ms = (
-			std::abs(axis_lx - 127) > Config::DEADZONE
-			|| std::abs(axis_ly - 127) > Config::DEADZONE
+			std::abs(_axis_lx - 127) > Config::DEADZONE
+			|| std::abs(_axis_ly - 127) > Config::DEADZONE
 		) ? 2 : 10;
 
 		int num_ready =
-			manager.Wait(returned_events, MAX_EPOLL_EVENTS, timeout_ms);
+			_manager.Wait(_returned_events, MAX_EPOLL_EVENTS, timeout_ms);
 
 		if (num_ready < 0)
 		{
@@ -55,29 +55,28 @@ void EventLoop::Run()
 
 		for (int i = 0; i < num_ready; i++)
 		{
-			auto* active_evdev =
-				static_cast<struct libevdev*>(returned_events[i].data.ptr);
+			auto* device =
+				static_cast<InputDevice*>(_returned_events[i].data.ptr);
 
 			struct input_event ev;
 
-			while (libevdev_next_event( active_evdev, LIBEVDEV_READ_FLAG_NORMAL, &ev)
-				== LIBEVDEV_READ_STATUS_SUCCESS)
+			while (device->NextEvent(ev))
 			{
-				if (active_evdev == ds4.GetEvdev())
+				if (device == &_ds4)
 				{
 					if (ev.type == EV_ABS)
 					{
-						if (ev.code == ABS_X) axis_lx = ev.value;
-						if (ev.code == ABS_Y) axis_ly = ev.value;
-						if (ev.code == ABS_RX) axis_rx = ev.value;
-						if (ev.code == ABS_RY) axis_ry = ev.value;
+						if (ev.code == ABS_X) _axis_lx = ev.value;
+						if (ev.code == ABS_Y) _axis_ly = ev.value;
+						if (ev.code == ABS_RX) _axis_rx = ev.value;
+						if (ev.code == ABS_RY) _axis_ry = ev.value;
 					}
 					else if (ev.type == EV_KEY)
 					{
 						auto it = Config::ButtonMap.find(ev.code);
 
 						if (it != Config::ButtonMap.end())
-							mouse.SendButton(it->second, ev.value);
+							_mouse.SendButton(it->second, ev.value);
 					}
 				}
 			}
@@ -96,24 +95,24 @@ void EventLoop::Run()
 			dt = 100.0f;
 
 		Vec2 move =
-			mouse_stick.Process(
-				axis_lx - 127,
-				axis_ly - 127,
+			_mouse_stick.Process(
+				_axis_lx - 127,
+				_axis_ly - 127,
 				Config::MOUSE_SENS_X,
 				Config::MOUSE_SENS_Y,
 				dt
 			);
 
 		Vec2 scroll =
-			scroll_stick.Process(
-				axis_rx - 127,
-				axis_ry - 127,
+			_scroll_stick.Process(
+				_axis_rx - 127,
+				_axis_ry - 127,
 				Config::SCROLL_SENS_X,
 				Config::SCROLL_SENS_Y,
 				dt
 			);
 
-		mouse.Move(move.x, move.y);
-		mouse.Scroll(scroll.x, scroll.y);
+		_mouse.Move(move.x, move.y);
+		_mouse.Scroll(scroll.x, scroll.y);
 	}
 }
