@@ -1,40 +1,47 @@
 /*┌───────────────────────────────────────────────────────────────────────────┐*/
 /*│                                                                           │*/
-/*│  EventLoop.hpp                                          ▒▒▒▒    ▒▒▒▒      │*/
+/*│  Controller.hpp                                         ▒▒▒▒    ▒▒▒▒      │*/
 /*│                                                         ▒▒▒▒    ▒▒▒▒      │*/
 /*│  By: 0xK92JL4                                               ▒▒▒▒          │*/
 /*│                                                           ▒▒▒▒▒▒▒▒        │*/
-/*│  Created: 2026/05/17 23:00:29 by 0xK92JL4                 ▒▒▒▒▒▒▒▒        │*/
-/*│  Updated: 2026/05/20 21:29:44 by 0xK92JL4                 ▒▒    ▒▒        │*/
+/*│  Created: 2026/05/19 20:20:08 by 0xK92JL4                 ▒▒▒▒▒▒▒▒        │*/
+/*│  Updated: 2026/05/20 21:39:43 by 0xK92JL4                 ▒▒    ▒▒        │*/
 /*│                                                                           │*/
 /*└───────────────────────────────────────────────────────────────────────────┘*/
 
 #pragma once
 
-#include "Controller.hpp"
-#include "DeviceManager.hpp"
-#include "StickProcessor.hpp"
+#include "InputDevice.hpp"
 #include "VirtualMouse.hpp"
+#include <linux/input.h>
 
-#include <chrono>
-#include <sys/epoll.h>
-
-class EventLoop
+class Controller
 {
 	private:
-		Controller      _controller;
-		DeviceManager   _manager;
-		VirtualMouse    _mouse;
+		InputDevice _ds4;
+		InputDevice _touchpad;
 
-		StickProcessor  _mouse_stick;
-		StickProcessor  _scroll_stick;
-
-		static constexpr int MAX_EPOLL_EVENTS = 4;
-		struct epoll_event   _returned_events[MAX_EPOLL_EVENTS];
-
-		std::chrono::steady_clock::time_point last_time;
+		int _axis_lx = 127;
+		int _axis_ly = 127;
+		int _axis_rx = 127;
+		int _axis_ry = 127;
 
 	public:
-		EventLoop();
-		void Run();
+		Controller();
+		~Controller() = default;
+
+		Controller(const Controller&) = delete;
+		Controller& operator=(const Controller&) = delete;
+
+		InputDevice* GetDs4Device();
+		InputDevice* GetTouchpadDevice();
+
+		void	HandleDeviceEvent(InputDevice* device, VirtualMouse& virtual_mouse);
+
+		int		GetLeftStickX() const;
+		int		GetLeftStickY() const;
+		int		GetRightStickX() const;
+		int		GetRightStickY() const;
+
+		bool	HasActiveMovement() const;
 };
