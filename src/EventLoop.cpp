@@ -5,7 +5,7 @@
 /*│  By: 0xK92JL4                                               ▒▒▒▒          │*/
 /*│                                                           ▒▒▒▒▒▒▒▒        │*/
 /*│  Created: 2026/05/17 23:00:54 by 0xK92JL4                 ▒▒▒▒▒▒▒▒        │*/
-/*│  Updated: 2026/05/20 23:33:46 by 0xK92JL4                 ▒▒    ▒▒        │*/
+/*│  Updated: 2026/05/20 23:52:03 by 0xK92JL4                 ▒▒    ▒▒        │*/
 /*│                                                                           │*/
 /*└───────────────────────────────────────────────────────────────────────────┘*/
 
@@ -27,7 +27,7 @@ EventLoop::EventLoop()
 	_manager.AddDevice(_controller.GetDs4Device());
 	_manager.AddDevice(_controller.GetTouchpadDevice());
 
-	last_time = std::chrono::steady_clock::now();
+	_last_time = std::chrono::steady_clock::now();
 }
 
 /*┌───────────────────────────────────────────────────────────────────────────┐*/
@@ -54,9 +54,9 @@ void EventLoop::Run()
 		}
 
 		auto current_time = std::chrono::steady_clock::now();
-		std::chrono::duration<float, std::milli> elapsed = current_time - last_time;
-		float dt = elapsed.count();
-		last_time = current_time;
+		auto elapsed = current_time - _last_time;
+		float dt = std::chrono::duration<float, std::milli>(elapsed).count();
+		_last_time = current_time;
 
 		if (dt > 100.0f) dt = 100.0f;
 
