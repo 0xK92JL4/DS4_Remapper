@@ -5,7 +5,7 @@
 /*│  By: 0xK92JL4                                               ▒▒▒▒          │*/
 /*│                                                           ▒▒▒▒▒▒▒▒        │*/
 /*│  Created: 2026/05/17 23:00:54 by 0xK92JL4                 ▒▒▒▒▒▒▒▒        │*/
-/*│  Updated: 2026/05/20 21:40:05 by 0xK92JL4                 ▒▒    ▒▒        │*/
+/*│  Updated: 2026/05/20 23:33:46 by 0xK92JL4                 ▒▒    ▒▒        │*/
 /*│                                                                           │*/
 /*└───────────────────────────────────────────────────────────────────────────┘*/
 
@@ -20,6 +20,9 @@
 /*└───────────────────────────────────────────────────────────────────────────┘*/
 
 EventLoop::EventLoop()
+	: _mouse_stick(Config::MOUSE_SENS_X, Config::MOUSE_SENS_Y)
+	, _scroll_stick(Config::SCROLL_SENS_X, Config::SCROLL_SENS_Y)
+
 {
 	_manager.AddDevice(_controller.GetDs4Device());
 	_manager.AddDevice(_controller.GetTouchpadDevice());
@@ -57,21 +60,8 @@ void EventLoop::Run()
 
 		if (dt > 100.0f) dt = 100.0f;
 
-		Vec2 move = _mouse_stick.Process(
-			_controller.GetLeftStickX() - Config::HALF_AXIS_RANGE,
-			_controller.GetLeftStickY() - Config::HALF_AXIS_RANGE,
-			Config::MOUSE_SENS_X,
-			Config::MOUSE_SENS_Y,
-			dt
-		);
-
-		Vec2 scroll = _scroll_stick.Process(
-			_controller.GetRightStickX() - Config::HALF_AXIS_RANGE,
-			_controller.GetRightStickY() - Config::HALF_AXIS_RANGE,
-			Config::SCROLL_SENS_X,
-			Config::SCROLL_SENS_Y,
-			dt
-		);
+		Vec2 move = _mouse_stick.Process(_controller.LeftStickPos(), dt);
+		Vec2 scroll = _scroll_stick.Process(_controller.RightStickPos(), dt);
 
 		_mouse.Move(move.x, move.y);
 		_mouse.Scroll(scroll.x, scroll.y);

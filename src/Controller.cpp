@@ -5,7 +5,7 @@
 /*│  By: 0xK92JL4                                               ▒▒▒▒          │*/
 /*│                                                           ▒▒▒▒▒▒▒▒        │*/
 /*│  Created: 2026/05/20 21:21:58 by 0xK92JL4                 ▒▒▒▒▒▒▒▒        │*/
-/*│  Updated: 2026/05/20 21:39:23 by 0xK92JL4                 ▒▒    ▒▒        │*/
+/*│  Updated: 2026/05/20 23:27:47 by 0xK92JL4                 ▒▒    ▒▒        │*/
 /*│                                                                           │*/
 /*└───────────────────────────────────────────────────────────────────────────┘*/
 
@@ -56,10 +56,8 @@ void Controller::HandleDeviceEvent(InputDevice* device, VirtualMouse& virtual_mo
     }
 }
 
-int Controller::GetLeftStickX()  const { return _axis_lx; }
-int Controller::GetLeftStickY()  const { return _axis_ly; }
-int Controller::GetRightStickX() const { return _axis_rx; }
-int Controller::GetRightStickY() const { return _axis_ry; }
+Vec2 Controller::LeftStickPos()  const { return {_axis_lx, _axis_ly}; }
+Vec2 Controller::RightStickPos() const { return {_axis_rx, _axis_ry}; }
 
 bool Controller::HasActiveMovement() const
 {

@@ -1,32 +1,18 @@
 /*┌───────────────────────────────────────────────────────────────────────────┐*/
 /*│                                                                           │*/
-/*│  StickProcessor.hpp                                     ▒▒▒▒    ▒▒▒▒      │*/
+/*│  structs.hpp                                            ▒▒▒▒    ▒▒▒▒      │*/
 /*│                                                         ▒▒▒▒    ▒▒▒▒      │*/
 /*│  By: 0xK92JL4                                               ▒▒▒▒          │*/
 /*│                                                           ▒▒▒▒▒▒▒▒        │*/
-/*│  Created: 2026/05/17 00:58:39 by 0xK92JL4                 ▒▒▒▒▒▒▒▒        │*/
-/*│  Updated: 2026/05/20 23:36:36 by 0xK92JL4                 ▒▒    ▒▒        │*/
+/*│  Created: 2026/05/20 23:29:57 by 0xK92JL4                 ▒▒▒▒▒▒▒▒        │*/
+/*│  Updated: 2026/05/20 23:30:10 by 0xK92JL4                 ▒▒    ▒▒        │*/
 /*│                                                                           │*/
 /*└───────────────────────────────────────────────────────────────────────────┘*/
 
 #pragma once
 
-#include "structs.hpp"
-
-class StickProcessor
+struct Vec2
 {
-	private:
-		float _acc_x = 0.0f;
-		float _acc_y = 0.0f;
-
-		float _sens_x = 1.0f;
-		float _sens_y = 1.0f;
-
-		int ProcessAxis(int raw, float& accumulator, float sensitivity, float dt);
-
-	public:
-		StickProcessor(float sensivity_x, float sensivity_y);
-
-		Vec2 Process(const Vec2& input, float dt);
+	int x;
+	int y;
 };
-

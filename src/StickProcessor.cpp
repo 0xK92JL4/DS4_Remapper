@@ -5,7 +5,7 @@
 /*│  By: 0xK92JL4                                               ▒▒▒▒          │*/
 /*│                                                           ▒▒▒▒▒▒▒▒        │*/
 /*│  Created: 2026/05/17 00:57:52 by 0xK92JL4                 ▒▒▒▒▒▒▒▒        │*/
-/*│  Updated: 2026/05/18 23:27:12 by 0xK92JL4                 ▒▒    ▒▒        │*/
+/*│  Updated: 2026/05/20 23:39:01 by 0xK92JL4                 ▒▒    ▒▒        │*/
 /*│                                                                           │*/
 /*└───────────────────────────────────────────────────────────────────────────┘*/
 
@@ -13,6 +13,14 @@
 #include "Config.hpp"
 
 #include <cmath>
+
+/*┌───────────────────────────────────────────────────────────────────────────┐*/
+/*│                         Constructor/Destructor                            │*/
+/*└───────────────────────────────────────────────────────────────────────────┘*/
+
+StickProcessor::StickProcessor(float sensivity_x, float sensivity_y)
+	: _sens_x(sensivity_x)
+	, _sens_y(sensivity_y) {}
 
 /*┌───────────────────────────────────────────────────────────────────────────┐*/
 /*│                                Private                                    │*/
@@ -47,18 +55,12 @@ int StickProcessor::ProcessAxis(
 /*│                                Public                                     │*/
 /*└───────────────────────────────────────────────────────────────────────────┘*/
 
-Vec2 StickProcessor::Process(
-	int raw_x,
-	int raw_y,
-	float sens_x,
-	float sens_y,
-	float dt
-)
+Vec2 StickProcessor::Process(const Vec2& input, float dt)
 {
 	Vec2 out;
 
-	out.x = ProcessAxis(raw_x, _acc_x, sens_x, dt);
-	out.y = ProcessAxis(raw_y, _acc_y, sens_y, dt);
+	out.x = ProcessAxis(input.x - Config::HALF_AXIS_RANGE, _acc_x, _sens_x, dt);
+	out.y = ProcessAxis(input.y - Config::HALF_AXIS_RANGE, _acc_y, _sens_y, dt);
 
 	return out;
 }

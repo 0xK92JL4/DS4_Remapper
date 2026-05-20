@@ -5,7 +5,7 @@
 /*│  By: 0xK92JL4                                               ▒▒▒▒          │*/
 /*│                                                           ▒▒▒▒▒▒▒▒        │*/
 /*│  Created: 2026/05/19 20:20:08 by 0xK92JL4                 ▒▒▒▒▒▒▒▒        │*/
-/*│  Updated: 2026/05/20 21:39:43 by 0xK92JL4                 ▒▒    ▒▒        │*/
+/*│  Updated: 2026/05/20 23:31:09 by 0xK92JL4                 ▒▒    ▒▒        │*/
 /*│                                                                           │*/
 /*└───────────────────────────────────────────────────────────────────────────┘*/
 
@@ -13,6 +13,8 @@
 
 #include "InputDevice.hpp"
 #include "VirtualMouse.hpp"
+#include "structs.hpp"
+
 #include <linux/input.h>
 
 class Controller
@@ -38,10 +40,8 @@ class Controller
 
 		void	HandleDeviceEvent(InputDevice* device, VirtualMouse& virtual_mouse);
 
-		int		GetLeftStickX() const;
-		int		GetLeftStickY() const;
-		int		GetRightStickX() const;
-		int		GetRightStickY() const;
+		Vec2	LeftStickPos() const;
+		Vec2	RightStickPos() const;
 
 		bool	HasActiveMovement() const;
 };
