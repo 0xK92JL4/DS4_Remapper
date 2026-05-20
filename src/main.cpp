@@ -5,7 +5,7 @@
 /*│  By: 0xK92JL4                                               ▒▒▒▒          │*/
 /*│                                                           ▒▒▒▒▒▒▒▒        │*/
 /*│  Created: 2026/05/17 00:59:29 by 0xK92JL4                 ▒▒▒▒▒▒▒▒        │*/
-/*│  Updated: 2026/05/17 23:07:27 by 0xK92JL4                 ▒▒    ▒▒        │*/
+/*│  Updated: 2026/05/20 23:42:29 by 0xK92JL4                 ▒▒    ▒▒        │*/
 /*│                                                                           │*/
 /*└───────────────────────────────────────────────────────────────────────────┘*/
 
@@ -20,9 +20,9 @@ int main(void)
 		EventLoop loop;
 		loop.Run();
 	}
-	catch (const std::exception& ex)
+	catch (const std::exception& e)
 	{
-		std::cerr << ex.what() << std::endl;
+		std::cerr << e.what() << std::endl;
 		return EXIT_FAILURE;
 	}
 
