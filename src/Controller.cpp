@@ -5,7 +5,7 @@
 /*│  By: 0xK92JL4                                               ▒▒▒▒          │*/
 /*│                                                           ▒▒▒▒▒▒▒▒        │*/
 /*│  Created: 2026/05/20 21:21:58 by 0xK92JL4                 ▒▒▒▒▒▒▒▒        │*/
-/*│  Updated: 2026/05/24 02:44:38 by 0xK92JL4                 ▒▒    ▒▒        │*/
+/*│  Updated: 2026/05/24 03:07:04 by 0xK92JL4                 ▒▒    ▒▒        │*/
 /*│                                                                           │*/
 /*└───────────────────────────────────────────────────────────────────────────┘*/
 
@@ -31,30 +31,30 @@ InputDevice* Controller::GetTouchpadDevice() { return &_touchpad; }
 
 void Controller::HandleDeviceEvent(InputDevice* device, VirtualMouse& virtual_mouse)
 {
-    if (!device) return;
+	if (!device) return;
 
-    struct input_event ev;
-    while (device->NextEvent(ev))
-    {
-        if (device == &_ds4)
-        {
-            if (ev.type == EV_ABS)
-            {
-                if (ev.code == ABS_X)  _axis_lx = ev.value;
-                if (ev.code == ABS_Y)  _axis_ly = ev.value;
-                if (ev.code == ABS_RX) _axis_rx = ev.value;
-                if (ev.code == ABS_RY) _axis_ry = ev.value;
-            }
-            else if (ev.type == EV_KEY)
-            {
-                auto it = Config::ButtonMap.find(ev.code);
-                if (it != Config::ButtonMap.end())
-                {
-                    virtual_mouse.SendButton(it->second, ev.value);
-                }
-            }
-        }
-    }
+	struct input_event ev;
+	while (device->NextEvent(ev))
+	{
+		if (device == &_ds4)
+		{
+			if (ev.type == EV_ABS)
+			{
+				if (ev.code == ABS_X)  _axis_lx = ev.value;
+				if (ev.code == ABS_Y)  _axis_ly = ev.value;
+				if (ev.code == ABS_RX) _axis_rx = ev.value;
+				if (ev.code == ABS_RY) _axis_ry = ev.value;
+			}
+			else if (ev.type == EV_KEY)
+			{
+				auto it = Config::ButtonMap.find(ev.code);
+				if (it != Config::ButtonMap.end())
+				{
+					virtual_mouse.SendButton(it->second, ev.value);
+				}
+			}
+		}
+	}
 }
 
 Vec2 Controller::LeftStickPos()  const { return {_axis_lx, _axis_ly}; }

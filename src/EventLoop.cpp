@@ -5,7 +5,7 @@
 /*│  By: 0xK92JL4                                               ▒▒▒▒          │*/
 /*│                                                           ▒▒▒▒▒▒▒▒        │*/
 /*│  Created: 2026/05/17 23:00:54 by 0xK92JL4                 ▒▒▒▒▒▒▒▒        │*/
-/*│  Updated: 2026/05/24 02:54:49 by 0xK92JL4                 ▒▒    ▒▒        │*/
+/*│  Updated: 2026/05/24 03:15:57 by 0xK92JL4                 ▒▒    ▒▒        │*/
 /*│                                                                           │*/
 /*└───────────────────────────────────────────────────────────────────────────┘*/
 
@@ -65,5 +65,7 @@ void EventLoop::Run()
 
 		_mouse.Move(move.x, move.y);
 		_mouse.Scroll(scroll.x, scroll.y);
+
+		//_controller.update();
 	}
 }

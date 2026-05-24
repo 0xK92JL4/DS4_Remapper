@@ -5,7 +5,7 @@
 /*│  By: 0xK92JL4                                               ▒▒▒▒          │*/
 /*│                                                           ▒▒▒▒▒▒▒▒        │*/
 /*│  Created: 2026/05/21 23:48:14 by 0xK92JL4                 ▒▒▒▒▒▒▒▒        │*/
-/*│  Updated: 2026/05/24 02:35:35 by 0xK92JL4                 ▒▒    ▒▒        │*/
+/*│  Updated: 2026/05/24 03:18:52 by 0xK92JL4                 ▒▒    ▒▒        │*/
 /*│                                                                           │*/
 /*└───────────────────────────────────────────────────────────────────────────┘*/
 
@@ -33,7 +33,7 @@ LightBar::LightBar(uint32_t color)
 		throw std::runtime_error("LightBar: failed to open sysfs LED nodes");
 
 	_color = color;
-	apply();
+	Apply();
 }
 
 LightBar::~LightBar()
@@ -48,19 +48,21 @@ LightBar::~LightBar()
 /*│                                Private                                    │*/
 /*└───────────────────────────────────────────────────────────────────────────┘*/
 
-bool LightBar::writeInt(int fd, uint8_t value)
+bool LightBar::WriteInt(int fd, uint8_t value)
 {
-	char buf[8];
+	char buf[4];
 
 	int len = snprintf(buf, sizeof(buf), "%u", value);
-	if (len <= 0 || len >= (int)sizeof(buf))
+	if (len <= 0)
 		return false;
 
 	return write(fd, buf, len) == len;
 }
 
-bool LightBar::apply()
+bool LightBar::Apply()
 {
+	if (!_enabled) return true;
+
 	uint8_t r = (_color >> 16) & 0xFF;
 	uint8_t g = (_color >> 8) & 0xFF;
 	uint8_t b = (_color) & 0xFF;
@@ -69,9 +71,9 @@ bool LightBar::apply()
 		return (v * _brightness) / 100;
 	};
 
-	bool OK = writeInt(_fd_r, scale(r))
-		&& writeInt(_fd_g, scale(g))
-		&& writeInt(_fd_b, scale(b));
+	bool OK = WriteInt(_fd_r, scale(r))
+		&& WriteInt(_fd_g, scale(g))
+		&& WriteInt(_fd_b, scale(b));
 
 	return OK;
 }
@@ -80,25 +82,25 @@ bool LightBar::apply()
 /*│                                Public                                     │*/
 /*└───────────────────────────────────────────────────────────────────────────┘*/
 
-bool LightBar::toggle(std::optional<bool> on)
+bool LightBar::Toggle(std::optional<bool> on)
 {
 	_enabled = (on.has_value()) ? *on : !_enabled;
-	return writeInt(_fd_global, _enabled);
+	return WriteInt(_fd_global, _enabled);
 }
 
-bool LightBar::setBrightness(uint8_t brightness)
+bool LightBar::SetBrightness(uint8_t brightness)
 {
 	_brightness = (brightness <= 100) ? brightness : 100;
-	return apply();
+	return Apply();
 }
 
-bool LightBar::setColor(uint32_t color)
+bool LightBar::SetColor(uint32_t color)
 {
 	_color = color;
-	return apply();
+	return Apply();
 }
 
-bool LightBar::setColor(uint8_t r, uint8_t g, uint8_t b)
+bool LightBar::SetColor(uint8_t r, uint8_t g, uint8_t b)
 {
 	uint32_t color = (
 		static_cast<uint32_t>(r) << 16)
@@ -106,6 +108,6 @@ bool LightBar::setColor(uint8_t r, uint8_t g, uint8_t b)
 		| (static_cast<uint32_t>(b)
 	);
 
-	return setColor(color);
+	return SetColor(color);
 }
 
