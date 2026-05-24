@@ -5,14 +5,15 @@
 /*│  By: 0xK92JL4                                               ▒▒▒▒          │*/
 /*│                                                           ▒▒▒▒▒▒▒▒        │*/
 /*│  Created: 2026/05/21 22:59:38 by 0xK92JL4                 ▒▒▒▒▒▒▒▒        │*/
-/*│  Updated: 2026/05/24 03:17:17 by 0xK92JL4                 ▒▒    ▒▒        │*/
+/*│  Updated: 2026/05/25 01:22:16 by 0xK92JL4                 ▒▒    ▒▒        │*/
 /*│                                                                           │*/
 /*└───────────────────────────────────────────────────────────────────────────┘*/
 
 #pragma once
 
-#include <cstdint>
 #include <optional>
+#include <cstdint>
+#include <chrono>
 
 class LightBar
 {
@@ -26,6 +27,13 @@ class LightBar
 		uint8_t		_brightness = 100;
 		bool		_enabled = true;
 
+		bool	_blinking = false;
+		int		_blink_cycles = -1;
+		int		_blink_done = 0;
+
+		std::chrono::milliseconds				_blink_interval{500};
+		std::chrono::steady_clock::time_point	_last_toggle;
+
 		bool WriteInt(int fd, uint8_t value);
 		bool Apply();
 
@@ -38,5 +46,9 @@ class LightBar
 		bool SetBrightness(uint8_t brightness);
 
 		bool Toggle(std::optional<bool> on = std::nullopt);
+
+		void StartBlink(std::chrono::milliseconds interval, int cycles);
+		void StopBlink();
+		void Update();
 };
 

@@ -5,7 +5,7 @@
 /*│  By: 0xK92JL4                                               ▒▒▒▒          │*/
 /*│                                                           ▒▒▒▒▒▒▒▒        │*/
 /*│  Created: 2026/05/20 21:21:58 by 0xK92JL4                 ▒▒▒▒▒▒▒▒        │*/
-/*│  Updated: 2026/05/24 17:55:24 by 0xK92JL4                 ▒▒    ▒▒        │*/
+/*│  Updated: 2026/05/25 01:28:20 by 0xK92JL4                 ▒▒    ▒▒        │*/
 /*│                                                                           │*/
 /*└───────────────────────────────────────────────────────────────────────────┘*/
 
@@ -66,6 +66,8 @@ void Controller::Update(float dt)
 
 	_move   = _mouse_stick.Process(left, dt);
 	_scroll = _scroll_stick.Process(right, dt);
+
+	_lightbar.Update();
 }
 
 Vec2 Controller::GetMove()  const  { return _move; }

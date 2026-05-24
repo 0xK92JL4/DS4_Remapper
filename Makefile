@@ -4,7 +4,7 @@ OBJ_DIR   := .obj
 
 CXX      := c++
 CXXFLAGS := -std=c++17 -Wall -Wextra -O3 -Iinclude $(shell pkg-config --cflags libevdev)
-LDFLAGS  := $(shell pkg-config --libs libevdev) #-lpthread
+LDFLAGS  := $(shell pkg-config --libs libevdev)
 
 SRCS := $(shell find $(SRC_DIR) -name '*.cpp')
 OBJS := $(patsubst $(SRC_DIR)/%.cpp,$(OBJ_DIR)/%.o,$(SRCS))

@@ -5,7 +5,7 @@
 /*│  By: 0xK92JL4                                               ▒▒▒▒          │*/
 /*│                                                           ▒▒▒▒▒▒▒▒        │*/
 /*│  Created: 2026/05/21 23:48:14 by 0xK92JL4                 ▒▒▒▒▒▒▒▒        │*/
-/*│  Updated: 2026/05/24 03:18:52 by 0xK92JL4                 ▒▒    ▒▒        │*/
+/*│  Updated: 2026/05/25 01:19:58 by 0xK92JL4                 ▒▒    ▒▒        │*/
 /*│                                                                           │*/
 /*└───────────────────────────────────────────────────────────────────────────┘*/
 
@@ -111,3 +111,40 @@ bool LightBar::SetColor(uint8_t r, uint8_t g, uint8_t b)
 	return SetColor(color);
 }
 
+void LightBar::StartBlink(std::chrono::milliseconds interval, int cycles)
+{
+	_blinking = true;
+	_blink_interval = interval;
+	_blink_cycles = cycles;
+	_blink_done = 0;
+	_last_toggle = std::chrono::steady_clock::now();
+}
+
+void LightBar::StopBlink()
+{
+	_blinking = false;
+	if (!_enabled) Toggle(true);
+}
+
+void LightBar::Update()
+{
+	if (!_blinking)
+		return;
+
+	auto now = std::chrono::steady_clock::now();
+
+	if (now - _last_toggle >= _blink_interval)
+	{
+		Toggle();
+		_last_toggle += _blink_interval;
+
+		if (_blink_cycles > 0)
+		{
+			_blink_done++;
+			if (_blink_done >= (_blink_cycles * 2))
+			{
+				StopBlink();
+			}
+		}
+	}
+}
