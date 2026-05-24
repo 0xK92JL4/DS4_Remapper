@@ -5,7 +5,7 @@
 /*│  By: 0xK92JL4                                               ▒▒▒▒          │*/
 /*│                                                           ▒▒▒▒▒▒▒▒        │*/
 /*│  Created: 2026/05/17 00:59:17 by 0xK92JL4                 ▒▒▒▒▒▒▒▒        │*/
-/*│  Updated: 2026/05/18 23:13:10 by 0xK92JL4                 ▒▒    ▒▒        │*/
+/*│  Updated: 2026/05/24 17:53:22 by 0xK92JL4                 ▒▒    ▒▒        │*/
 /*│                                                                           │*/
 /*└───────────────────────────────────────────────────────────────────────────┘*/
 
@@ -67,20 +67,20 @@ void VirtualMouse::SendButton(int virtual_button_code, int value)
     Emit(EV_KEY, virtual_button_code, value);
 }
 
-void VirtualMouse::Move(int dx, int dy)
+void VirtualMouse::Move(Vec2 move)
 {
-	if (dx != 0) libevdev_uinput_write_event(_uidev, EV_REL, REL_X, dx);
-	if (dy != 0) libevdev_uinput_write_event(_uidev, EV_REL, REL_Y, dy);
+	if (move.x != 0) libevdev_uinput_write_event(_uidev, EV_REL, REL_X, move.x);
+	if (move.y != 0) libevdev_uinput_write_event(_uidev, EV_REL, REL_Y, move.y);
 
-	if (dx != 0 || dy != 0)
+	if (move.x != 0 || move.y != 0)
 		libevdev_uinput_write_event(_uidev, EV_SYN, SYN_REPORT, 0);
 }
 
-void VirtualMouse::Scroll(int sx, int sy)
+void VirtualMouse::Scroll(Vec2 scroll)
 {
-	if (sx != 0) libevdev_uinput_write_event(_uidev, EV_REL, REL_HWHEEL, sx);
-	if (sy != 0) libevdev_uinput_write_event(_uidev, EV_REL, REL_WHEEL, -sy);
+	if (scroll.x != 0) libevdev_uinput_write_event(_uidev, EV_REL, REL_HWHEEL, scroll.x);
+	if (scroll.y != 0) libevdev_uinput_write_event(_uidev, EV_REL, REL_WHEEL, -scroll.y);
 
-	if (sx != 0 || sy != 0)
+	if (scroll.x != 0 || scroll.y != 0)
 		libevdev_uinput_write_event(_uidev, EV_SYN, SYN_REPORT, 0);
 }

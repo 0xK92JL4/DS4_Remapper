@@ -5,7 +5,7 @@
 /*│  By: 0xK92JL4                                               ▒▒▒▒          │*/
 /*│                                                           ▒▒▒▒▒▒▒▒        │*/
 /*│  Created: 2026/05/20 21:21:58 by 0xK92JL4                 ▒▒▒▒▒▒▒▒        │*/
-/*│  Updated: 2026/05/24 03:07:04 by 0xK92JL4                 ▒▒    ▒▒        │*/
+/*│  Updated: 2026/05/24 17:55:24 by 0xK92JL4                 ▒▒    ▒▒        │*/
 /*│                                                                           │*/
 /*└───────────────────────────────────────────────────────────────────────────┘*/
 
@@ -19,8 +19,10 @@
 
 Controller::Controller()
 	: _lightbar(Config::COLOR)
-    , _ds4(Config::DS4_DEVICE, false)
-    , _touchpad(Config::TOUCHPAD_DEVICE, true) {}
+	, _ds4(Config::DS4_DEVICE, false)
+	, _touchpad(Config::TOUCHPAD_DEVICE, true)
+	, _mouse_stick(Config::MOUSE_SENS_X, Config::MOUSE_SENS_Y)
+	, _scroll_stick(Config::SCROLL_SENS_X, Config::SCROLL_SENS_Y) {}
 
 /*┌───────────────────────────────────────────────────────────────────────────┐*/
 /*│                                 Public                                    │*/
@@ -57,8 +59,17 @@ void Controller::HandleDeviceEvent(InputDevice* device, VirtualMouse& virtual_mo
 	}
 }
 
-Vec2 Controller::LeftStickPos()  const { return {_axis_lx, _axis_ly}; }
-Vec2 Controller::RightStickPos() const { return {_axis_rx, _axis_ry}; }
+void Controller::Update(float dt)
+{
+	const Vec2 left {_axis_lx, _axis_ly};
+	const Vec2 right{_axis_rx, _axis_ry};
+
+	_move   = _mouse_stick.Process(left, dt);
+	_scroll = _scroll_stick.Process(right, dt);
+}
+
+Vec2 Controller::GetMove()  const  { return _move; }
+Vec2 Controller::GetScroll() const { return _scroll; }
 
 bool Controller::HasActiveMovement() const
 {

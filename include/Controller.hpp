@@ -5,13 +5,14 @@
 /*│  By: 0xK92JL4                                               ▒▒▒▒          │*/
 /*│                                                           ▒▒▒▒▒▒▒▒        │*/
 /*│  Created: 2026/05/19 20:20:08 by 0xK92JL4                 ▒▒▒▒▒▒▒▒        │*/
-/*│  Updated: 2026/05/24 03:18:37 by 0xK92JL4                 ▒▒    ▒▒        │*/
+/*│  Updated: 2026/05/24 17:51:00 by 0xK92JL4                 ▒▒    ▒▒        │*/
 /*│                                                                           │*/
 /*└───────────────────────────────────────────────────────────────────────────┘*/
 
 #pragma once
 
 #include "Controller/LightBar.hpp"
+#include "StickProcessor.hpp"
 #include "InputDevice.hpp"
 #include "VirtualMouse.hpp"
 #include "structs.hpp"
@@ -25,10 +26,16 @@ class Controller
 		InputDevice	_ds4;
 		InputDevice	_touchpad;
 
+		StickProcessor  _mouse_stick;
+		StickProcessor  _scroll_stick;
+
 		int _axis_lx = 127;
 		int _axis_ly = 127;
 		int _axis_rx = 127;
 		int _axis_ry = 127;
+
+		Vec2 _move   = {0,0};
+		Vec2 _scroll = {0,0};
 
 	public:
 		Controller();
@@ -41,9 +48,10 @@ class Controller
 		InputDevice* GetTouchpadDevice();
 
 		void	HandleDeviceEvent(InputDevice* device, VirtualMouse& virtual_mouse);
+		void	Update(float dt);
 
-		Vec2	LeftStickPos() const;
-		Vec2	RightStickPos() const;
+		Vec2	GetMove() const;
+		Vec2	GetScroll() const;
 
 		bool	HasActiveMovement() const;
 };

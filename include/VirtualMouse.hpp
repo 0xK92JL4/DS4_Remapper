@@ -5,12 +5,13 @@
 /*│  By: 0xK92JL4                                               ▒▒▒▒          │*/
 /*│                                                           ▒▒▒▒▒▒▒▒        │*/
 /*│  Created: 2026/05/17 00:58:46 by 0xK92JL4                 ▒▒▒▒▒▒▒▒        │*/
-/*│  Updated: 2026/05/18 22:58:06 by 0xK92JL4                 ▒▒    ▒▒        │*/
+/*│  Updated: 2026/05/24 17:48:16 by 0xK92JL4                 ▒▒    ▒▒        │*/
 /*│                                                                           │*/
 /*└───────────────────────────────────────────────────────────────────────────┘*/
 
 #pragma once
 
+#include "structs.hpp"
 #include <libevdev/libevdev-uinput.h>
 
 class VirtualMouse
@@ -27,7 +28,7 @@ class VirtualMouse
 		VirtualMouse(const VirtualMouse&) = delete;
 		VirtualMouse& operator=(const VirtualMouse&) = delete;
 
-		void Move(int dx, int dy);
-		void Scroll(int rx, int ry);
+		void Move(Vec2 move);
+		void Scroll(Vec2 scroll);
 		void SendButton(int virtual_button_code, int value);
 };
