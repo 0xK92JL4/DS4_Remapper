@@ -5,7 +5,7 @@
 /*│  By: 0xK92JL4                                               ▒▒▒▒          │*/
 /*│                                                           ▒▒▒▒▒▒▒▒        │*/
 /*│  Created: 2026/05/17 00:58:04 by 0xK92JL4                 ▒▒▒▒▒▒▒▒        │*/
-/*│  Updated: 2026/05/18 23:27:28 by 0xK92JL4                 ▒▒    ▒▒        │*/
+/*│  Updated: 2026/05/24 02:44:51 by 0xK92JL4                 ▒▒    ▒▒        │*/
 /*│                                                                           │*/
 /*└───────────────────────────────────────────────────────────────────────────┘*/
 
@@ -13,21 +13,30 @@
 
 #include <unordered_map>
 #include <linux/input.h>
+#include <cstdint>
 
 namespace Config
 {
     constexpr int DEADZONE = 20;
-    constexpr int HALF_AXIS_RANGE = 127;
+    constexpr int HALF_AXIS = 127;
+
 
     constexpr float MOUSE_SENS_X = 1.0f;
     constexpr float MOUSE_SENS_Y = 1.0f;
 
     constexpr float SCROLL_SENS_X = 0.035f; 
     constexpr float SCROLL_SENS_Y = 0.020f; 
+
+    constexpr uint32_t COLOR = 0xAA0000;
  
 	// grep -H . /sys/class/input/event*/device/name
     const char* const DS4_DEVICE = "/dev/input/event21";
     const char* const TOUCHPAD_DEVICE = "/dev/input/event23";
+
+	const char* const LED_R = "/sys/class/leds/input22:red/brightness";
+	const char* const LED_G = "/sys/class/leds/input22:green/brightness";
+	const char* const LED_B = "/sys/class/leds/input22:blue/brightness";
+	const char* const LED_GLOBAL = "/sys/class/leds/input22:global/brightness";
 
     const std::unordered_map<int, int> ButtonMap = {
         { BTN_SOUTH,  BTN_LEFT },

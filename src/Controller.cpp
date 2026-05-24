@@ -5,7 +5,7 @@
 /*│  By: 0xK92JL4                                               ▒▒▒▒          │*/
 /*│                                                           ▒▒▒▒▒▒▒▒        │*/
 /*│  Created: 2026/05/20 21:21:58 by 0xK92JL4                 ▒▒▒▒▒▒▒▒        │*/
-/*│  Updated: 2026/05/20 23:27:47 by 0xK92JL4                 ▒▒    ▒▒        │*/
+/*│  Updated: 2026/05/24 02:44:38 by 0xK92JL4                 ▒▒    ▒▒        │*/
 /*│                                                                           │*/
 /*└───────────────────────────────────────────────────────────────────────────┘*/
 
@@ -18,7 +18,8 @@
 /*└───────────────────────────────────────────────────────────────────────────┘*/
 
 Controller::Controller()
-    : _ds4(Config::DS4_DEVICE, false)
+	: _lightbar(Config::COLOR)
+    , _ds4(Config::DS4_DEVICE, false)
     , _touchpad(Config::TOUCHPAD_DEVICE, true) {}
 
 /*┌───────────────────────────────────────────────────────────────────────────┐*/
@@ -61,11 +62,11 @@ Vec2 Controller::RightStickPos() const { return {_axis_rx, _axis_ry}; }
 
 bool Controller::HasActiveMovement() const
 {
-    bool L_Stick = (std::abs(_axis_lx - 127) > Config::DEADZONE
-					|| std::abs(_axis_ly - 127) > Config::DEADZONE);
+    bool L_Stick = (std::abs(_axis_lx - Config::HALF_AXIS) > Config::DEADZONE
+					|| std::abs(_axis_ly - Config::HALF_AXIS) > Config::DEADZONE);
 
-    bool R_Stick = (std::abs(_axis_rx - 127) > Config::DEADZONE
-					|| std::abs(_axis_ry - 127) > Config::DEADZONE);
+    bool R_Stick = (std::abs(_axis_rx - Config::HALF_AXIS) > Config::DEADZONE
+					|| std::abs(_axis_ry - Config::HALF_AXIS) > Config::DEADZONE);
 
     return L_Stick || R_Stick;
 }

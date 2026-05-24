@@ -1,66 +1,111 @@
 /*┌───────────────────────────────────────────────────────────────────────────┐*/
 /*│                                                                           │*/
-/*│  StickProcessor.cpp                                     ▒▒▒▒    ▒▒▒▒      │*/
+/*│  LightBar.cpp                                           ▒▒▒▒    ▒▒▒▒      │*/
 /*│                                                         ▒▒▒▒    ▒▒▒▒      │*/
 /*│  By: 0xK92JL4                                               ▒▒▒▒          │*/
 /*│                                                           ▒▒▒▒▒▒▒▒        │*/
-/*│  Created: 2026/05/17 00:57:52 by 0xK92JL4                 ▒▒▒▒▒▒▒▒        │*/
-/*│  Updated: 2026/05/24 02:41:43 by 0xK92JL4                 ▒▒    ▒▒        │*/
+/*│  Created: 2026/05/21 23:48:14 by 0xK92JL4                 ▒▒▒▒▒▒▒▒        │*/
+/*│  Updated: 2026/05/24 02:35:35 by 0xK92JL4                 ▒▒    ▒▒        │*/
 /*│                                                                           │*/
 /*└───────────────────────────────────────────────────────────────────────────┘*/
 
-#include "StickProcessor.hpp"
+#include "Controller/LightBar.hpp"
 #include "Config.hpp"
 
-#include <cmath>
+#include <fcntl.h>
+#include <unistd.h>
+#include <stdexcept>
+#include <algorithm>
+#include <string>
 
 /*┌───────────────────────────────────────────────────────────────────────────┐*/
-/*│                         Constructor/Destructor                            │*/
+/*│                          Constructor/Destructor                           │*/
 /*└───────────────────────────────────────────────────────────────────────────┘*/
 
-StickProcessor::StickProcessor(float sensivity_x, float sensivity_y)
-	: _sens_x(sensivity_x)
-	, _sens_y(sensivity_y) {}
+LightBar::LightBar(uint32_t color)
+{
+	_fd_r = open(Config::LED_R, O_WRONLY);
+	_fd_g = open(Config::LED_G, O_WRONLY);
+	_fd_b = open(Config::LED_B, O_WRONLY);
+	_fd_global = open(Config::LED_GLOBAL, O_WRONLY);
+
+	if (_fd_r < 0 || _fd_g < 0 || _fd_b < 0 || _fd_global < 0)
+		throw std::runtime_error("LightBar: failed to open sysfs LED nodes");
+
+	_color = color;
+	apply();
+}
+
+LightBar::~LightBar()
+{
+    if (_fd_r >= 0) close(_fd_r);
+    if (_fd_g >= 0) close(_fd_g);
+    if (_fd_b >= 0) close(_fd_b);
+    if (_fd_global >= 0) close(_fd_global);
+}
 
 /*┌───────────────────────────────────────────────────────────────────────────┐*/
 /*│                                Private                                    │*/
 /*└───────────────────────────────────────────────────────────────────────────┘*/
 
-int StickProcessor::ProcessAxis(
-	int raw,
-	float& accumulator,
-	float sensitivity,
-	float dt
-)
+bool LightBar::writeInt(int fd, uint8_t value)
 {
-	if (std::abs(raw) <= Config::DEADZONE)
-	{
-		accumulator = 0.0f;
-		return 0;
-	}
+	char buf[8];
 
-	float push_ratio = static_cast<float>(raw - (raw > 0 ? Config::DEADZONE : -Config::DEADZONE))
-		/ (Config::HALF_AXIS - Config::DEADZONE);
+	int len = snprintf(buf, sizeof(buf), "%u", value);
+	if (len <= 0 || len >= (int)sizeof(buf))
+		return false;
 
-	accumulator += push_ratio * sensitivity * dt;
+	return write(fd, buf, len) == len;
+}
 
-	int delta = static_cast<int>(accumulator);
+bool LightBar::apply()
+{
+	uint8_t r = (_color >> 16) & 0xFF;
+	uint8_t g = (_color >> 8) & 0xFF;
+	uint8_t b = (_color) & 0xFF;
 
-	accumulator -= delta;
+	auto scale = [this](uint8_t v) -> int {
+		return (v * _brightness) / 100;
+	};
 
-	return delta;
+	bool OK = writeInt(_fd_r, scale(r))
+		&& writeInt(_fd_g, scale(g))
+		&& writeInt(_fd_b, scale(b));
+
+	return OK;
 }
 
 /*┌───────────────────────────────────────────────────────────────────────────┐*/
 /*│                                Public                                     │*/
 /*└───────────────────────────────────────────────────────────────────────────┘*/
 
-Vec2 StickProcessor::Process(const Vec2& input, float dt)
+bool LightBar::toggle(std::optional<bool> on)
 {
-	Vec2 out;
-
-	out.x = ProcessAxis(input.x - Config::HALF_AXIS, _acc_x, _sens_x, dt);
-	out.y = ProcessAxis(input.y - Config::HALF_AXIS, _acc_y, _sens_y, dt);
-
-	return out;
+	_enabled = (on.has_value()) ? *on : !_enabled;
+	return writeInt(_fd_global, _enabled);
 }
+
+bool LightBar::setBrightness(uint8_t brightness)
+{
+	_brightness = (brightness <= 100) ? brightness : 100;
+	return apply();
+}
+
+bool LightBar::setColor(uint32_t color)
+{
+	_color = color;
+	return apply();
+}
+
+bool LightBar::setColor(uint8_t r, uint8_t g, uint8_t b)
+{
+	uint32_t color = (
+		static_cast<uint32_t>(r) << 16)
+		| (static_cast<uint32_t>(g) << 8)
+		| (static_cast<uint32_t>(b)
+	);
+
+	return setColor(color);
+}
+

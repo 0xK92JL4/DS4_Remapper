@@ -5,12 +5,13 @@
 /*│  By: 0xK92JL4                                               ▒▒▒▒          │*/
 /*│                                                           ▒▒▒▒▒▒▒▒        │*/
 /*│  Created: 2026/05/19 20:20:08 by 0xK92JL4                 ▒▒▒▒▒▒▒▒        │*/
-/*│  Updated: 2026/05/20 23:31:09 by 0xK92JL4                 ▒▒    ▒▒        │*/
+/*│  Updated: 2026/05/24 02:55:10 by 0xK92JL4                 ▒▒    ▒▒        │*/
 /*│                                                                           │*/
 /*└───────────────────────────────────────────────────────────────────────────┘*/
 
 #pragma once
 
+#include "Controller/LightBar.hpp"
 #include "InputDevice.hpp"
 #include "VirtualMouse.hpp"
 #include "structs.hpp"
@@ -20,8 +21,9 @@
 class Controller
 {
 	private:
-		InputDevice _ds4;
-		InputDevice _touchpad;
+		LightBar	_lightbar;
+		InputDevice	_ds4;
+		InputDevice	_touchpad;
 
 		int _axis_lx = 127;
 		int _axis_ly = 127;
