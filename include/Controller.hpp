@@ -5,13 +5,14 @@
 /*│  By: 0xK92JL4                                               ▒▒▒▒          │*/
 /*│                                                           ▒▒▒▒▒▒▒▒        │*/
 /*│  Created: 2026/05/19 20:20:08 by 0xK92JL4                 ▒▒▒▒▒▒▒▒        │*/
-/*│  Updated: 2026/05/24 17:51:00 by 0xK92JL4                 ▒▒    ▒▒        │*/
+/*│  Updated: 2026/05/26 22:41:03 by 0xK92JL4                 ▒▒    ▒▒        │*/
 /*│                                                                           │*/
 /*└───────────────────────────────────────────────────────────────────────────┘*/
 
 #pragma once
 
 #include "Controller/LightBar.hpp"
+#include "Controller/Battery.hpp"
 #include "StickProcessor.hpp"
 #include "InputDevice.hpp"
 #include "VirtualMouse.hpp"
@@ -23,6 +24,7 @@ class Controller
 {
 	private:
 		LightBar	_lightbar;
+		Battery		_battery;
 		InputDevice	_ds4;
 		InputDevice	_touchpad;
 

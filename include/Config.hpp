@@ -5,7 +5,7 @@
 /*│  By: 0xK92JL4                                               ▒▒▒▒          │*/
 /*│                                                           ▒▒▒▒▒▒▒▒        │*/
 /*│  Created: 2026/05/17 00:58:04 by 0xK92JL4                 ▒▒▒▒▒▒▒▒        │*/
-/*│  Updated: 2026/05/24 02:44:51 by 0xK92JL4                 ▒▒    ▒▒        │*/
+/*│  Updated: 2026/05/25 12:41:55 by 0xK92JL4                 ▒▒    ▒▒        │*/
 /*│                                                                           │*/
 /*└───────────────────────────────────────────────────────────────────────────┘*/
 
@@ -37,6 +37,11 @@ namespace Config
 	const char* const LED_G = "/sys/class/leds/input22:green/brightness";
 	const char* const LED_B = "/sys/class/leds/input22:blue/brightness";
 	const char* const LED_GLOBAL = "/sys/class/leds/input22:global/brightness";
+
+	const char* const BATTERY_CAPACITY
+		= "/sys/class/power_supply/ps-controller-battery-28:c1:3c:48:43:83/capacity";
+	const char* const BATTERY_STATUS
+		= "/sys/class/power_supply/ps-controller-battery-28:c1:3c:48:43:83/status";
 
     const std::unordered_map<int, int> ButtonMap = {
         { BTN_SOUTH,  BTN_LEFT },
