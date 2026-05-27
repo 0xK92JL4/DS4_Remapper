@@ -5,7 +5,7 @@
 /*│  By: 0xK92JL4                                               ▒▒▒▒          │*/
 /*│                                                           ▒▒▒▒▒▒▒▒        │*/
 /*│  Created: 2026/05/17 23:00:54 by 0xK92JL4                 ▒▒▒▒▒▒▒▒        │*/
-/*│  Updated: 2026/05/24 17:50:26 by 0xK92JL4                 ▒▒    ▒▒        │*/
+/*│  Updated: 2026/05/27 22:34:29 by 0xK92JL4                 ▒▒    ▒▒        │*/
 /*│                                                                           │*/
 /*└───────────────────────────────────────────────────────────────────────────┘*/
 
@@ -58,6 +58,18 @@ void EventLoop::Run()
 		if (dt > 100.0f) dt = 100.0f;
 
 		_controller.Update(dt);
+
+		if (current_time - _battery_last_time >= Config::BATTERY_REFRESH_RATE)
+		{
+			_battery_last_time += Config::BATTERY_REFRESH_RATE;
+			_controller.UpdateBattery();
+		}
+
+		if (current_time - _led_last_time >= Config::LED_REFRESH_RATE)
+		{
+			_led_last_time += Config::LED_REFRESH_RATE;
+			_controller.UpdateLightBar();
+		}
 
 		_mouse.Move(_controller.GetMove());
 		_mouse.Scroll(_controller.GetScroll());

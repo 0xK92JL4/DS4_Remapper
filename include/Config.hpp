@@ -5,7 +5,7 @@
 /*│  By: 0xK92JL4                                               ▒▒▒▒          │*/
 /*│                                                           ▒▒▒▒▒▒▒▒        │*/
 /*│  Created: 2026/05/17 00:58:04 by 0xK92JL4                 ▒▒▒▒▒▒▒▒        │*/
-/*│  Updated: 2026/05/25 12:41:55 by 0xK92JL4                 ▒▒    ▒▒        │*/
+/*│  Updated: 2026/05/27 22:32:44 by 0xK92JL4                 ▒▒    ▒▒        │*/
 /*│                                                                           │*/
 /*└───────────────────────────────────────────────────────────────────────────┘*/
 
@@ -14,6 +14,7 @@
 #include <unordered_map>
 #include <linux/input.h>
 #include <cstdint>
+#include <chrono>
 
 namespace Config
 {
@@ -28,6 +29,9 @@ namespace Config
     constexpr float SCROLL_SENS_Y = 0.020f; 
 
     constexpr uint32_t COLOR = 0xAA0000;
+
+	constexpr auto BATTERY_REFRESH_RATE = std::chrono::milliseconds(200);
+	constexpr auto LED_REFRESH_RATE = std::chrono::milliseconds(50);
  
 	// grep -H . /sys/class/input/event*/device/name
     const char* const DS4_DEVICE = "/dev/input/event21";

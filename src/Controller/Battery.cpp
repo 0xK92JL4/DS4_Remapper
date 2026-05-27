@@ -5,7 +5,7 @@
 /*│  By: 0xK92JL4                                               ▒▒▒▒          │*/
 /*│                                                           ▒▒▒▒▒▒▒▒        │*/
 /*│  Created: 2026/05/25 14:18:32 by 0xK92JL4                 ▒▒▒▒▒▒▒▒        │*/
-/*│  Updated: 2026/05/26 22:37:18 by 0xK92JL4                 ▒▒    ▒▒        │*/
+/*│  Updated: 2026/05/27 22:34:12 by 0xK92JL4                 ▒▒    ▒▒        │*/
 /*│                                                                           │*/
 /*└───────────────────────────────────────────────────────────────────────────┘*/
 
@@ -26,7 +26,7 @@ Battery::Battery()
 	_fd_capacity = open(Config::BATTERY_CAPACITY, O_RDONLY);
 	_fd_status = open(Config::BATTERY_STATUS, O_RDONLY);
 
-	if (_fd_capacity < 0 || _fd_capacity < 0)
+	if (_fd_capacity < 0 || _fd_status < 0)
 		throw std::runtime_error("Battery: failed to open sysfs files");
 }
 

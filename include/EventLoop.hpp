@@ -5,7 +5,7 @@
 /*│  By: 0xK92JL4                                               ▒▒▒▒          │*/
 /*│                                                           ▒▒▒▒▒▒▒▒        │*/
 /*│  Created: 2026/05/17 23:00:29 by 0xK92JL4                 ▒▒▒▒▒▒▒▒        │*/
-/*│  Updated: 2026/05/24 17:51:05 by 0xK92JL4                 ▒▒    ▒▒        │*/
+/*│  Updated: 2026/05/27 22:33:15 by 0xK92JL4                 ▒▒    ▒▒        │*/
 /*│                                                                           │*/
 /*└───────────────────────────────────────────────────────────────────────────┘*/
 
@@ -29,6 +29,8 @@ class EventLoop
 		struct epoll_event   _returned_events[MAX_EPOLL_EVENTS];
 
 		std::chrono::steady_clock::time_point _last_time;
+		std::chrono::steady_clock::time_point _battery_last_time;
+		std::chrono::steady_clock::time_point _led_last_time;
 
 	public:
 		EventLoop();

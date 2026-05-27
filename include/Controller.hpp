@@ -5,7 +5,7 @@
 /*│  By: 0xK92JL4                                               ▒▒▒▒          │*/
 /*│                                                           ▒▒▒▒▒▒▒▒        │*/
 /*│  Created: 2026/05/19 20:20:08 by 0xK92JL4                 ▒▒▒▒▒▒▒▒        │*/
-/*│  Updated: 2026/05/26 22:41:03 by 0xK92JL4                 ▒▒    ▒▒        │*/
+/*│  Updated: 2026/05/27 22:33:00 by 0xK92JL4                 ▒▒    ▒▒        │*/
 /*│                                                                           │*/
 /*└───────────────────────────────────────────────────────────────────────────┘*/
 
@@ -51,6 +51,9 @@ class Controller
 
 		void	HandleDeviceEvent(InputDevice* device, VirtualMouse& virtual_mouse);
 		void	Update(float dt);
+
+		void    UpdateLightBar();
+		void    UpdateBattery();
 
 		Vec2	GetMove() const;
 		Vec2	GetScroll() const;
