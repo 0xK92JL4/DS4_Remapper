@@ -5,7 +5,7 @@
 /*│  By: 0xK92JL4                                               ▒▒▒▒          │*/
 /*│                                                           ▒▒▒▒▒▒▒▒        │*/
 /*│  Created: 2026/05/17 23:00:54 by 0xK92JL4                 ▒▒▒▒▒▒▒▒        │*/
-/*│  Updated: 2026/05/27 22:51:14 by 0xK92JL4                 ▒▒    ▒▒        │*/
+/*│  Updated: 2026/05/27 23:10:09 by 0xK92JL4                 ▒▒    ▒▒        │*/
 /*│                                                                           │*/
 /*└───────────────────────────────────────────────────────────────────────────┘*/
 
@@ -57,7 +57,12 @@ void EventLoop::Run()
 		float dt = std::chrono::duration<float, std::milli>(elapsed).count();
 		_last_time = current_time;
 
-		if (dt > 100.0f) dt = 100.0f;
+		if (dt > 100.0f)
+        {
+            dt = 100.0f;
+            _battery_last_time = current_time;
+            _led_last_time = current_time;
+        }
 
 		_controller.Update(dt);
 
