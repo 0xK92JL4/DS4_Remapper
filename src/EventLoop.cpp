@@ -5,7 +5,7 @@
 /*│  By: 0xK92JL4                                               ▒▒▒▒          │*/
 /*│                                                           ▒▒▒▒▒▒▒▒        │*/
 /*│  Created: 2026/05/17 23:00:54 by 0xK92JL4                 ▒▒▒▒▒▒▒▒        │*/
-/*│  Updated: 2026/05/27 22:34:29 by 0xK92JL4                 ▒▒    ▒▒        │*/
+/*│  Updated: 2026/05/27 22:51:14 by 0xK92JL4                 ▒▒    ▒▒        │*/
 /*│                                                                           │*/
 /*└───────────────────────────────────────────────────────────────────────────┘*/
 
@@ -25,6 +25,8 @@ EventLoop::EventLoop()
 	_manager.AddDevice(_controller.GetTouchpadDevice());
 
 	_last_time = std::chrono::steady_clock::now();
+	_battery_last_time = std::chrono::steady_clock::now();
+	_led_last_time = std::chrono::steady_clock::now();
 }
 
 /*┌───────────────────────────────────────────────────────────────────────────┐*/
