@@ -5,7 +5,7 @@
 /*│  By: 0xK92JL4                                               ▒▒▒▒          │*/
 /*│                                                           ▒▒▒▒▒▒▒▒        │*/
 /*│  Created: 2026/05/17 00:59:17 by 0xK92JL4                 ▒▒▒▒▒▒▒▒        │*/
-/*│  Updated: 2026/05/24 17:53:22 by 0xK92JL4                 ▒▒    ▒▒        │*/
+/*│  Updated: 2026/05/29 17:17:03 by 0xK92JL4                 ▒▒    ▒▒        │*/
 /*│                                                                           │*/
 /*└───────────────────────────────────────────────────────────────────────────┘*/
 
@@ -30,10 +30,15 @@ VirtualMouse::VirtualMouse()
     libevdev_enable_event_code(vdev, EV_REL, REL_WHEEL, nullptr);
     libevdev_enable_event_code(vdev, EV_REL, REL_HWHEEL, nullptr);
     
-    libevdev_enable_event_type(vdev, EV_KEY);
-    libevdev_enable_event_code(vdev, EV_KEY, BTN_LEFT, nullptr);
-    libevdev_enable_event_code(vdev, EV_KEY, BTN_RIGHT, nullptr);
-    libevdev_enable_event_code(vdev, EV_KEY, BTN_MIDDLE, nullptr);
+	libevdev_enable_event_type(vdev, EV_KEY);
+
+	for (const auto& [input, action] : Config::InputMap)
+	{
+		if (action.type == ActionType::MouseButton)
+		{
+			libevdev_enable_event_code(vdev, EV_KEY, action.code, nullptr);
+		}
+	}
 
     int rc = libevdev_uinput_create_from_device(
 				vdev, LIBEVDEV_UINPUT_OPEN_MANAGED, &_uidev);

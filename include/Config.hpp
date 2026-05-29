@@ -5,12 +5,13 @@
 /*│  By: 0xK92JL4                                               ▒▒▒▒          │*/
 /*│                                                           ▒▒▒▒▒▒▒▒        │*/
 /*│  Created: 2026/05/17 00:58:04 by 0xK92JL4                 ▒▒▒▒▒▒▒▒        │*/
-/*│  Updated: 2026/05/27 22:52:34 by 0xK92JL4                 ▒▒    ▒▒        │*/
+/*│  Updated: 2026/05/29 17:09:40 by 0xK92JL4                 ▒▒    ▒▒        │*/
 /*│                                                                           │*/
 /*└───────────────────────────────────────────────────────────────────────────┘*/
 
 #pragma once
 
+#include "structs.hpp"
 #include <unordered_map>
 #include <linux/input.h>
 #include <cstdint>
@@ -47,9 +48,9 @@ namespace Config
 	const char* const BATTERY_STATUS
 		= "/sys/class/power_supply/ps-controller-battery-28:c1:3c:48:43:83/status";
 
-    const std::unordered_map<int, int> ButtonMap = {
-        { BTN_SOUTH,  BTN_LEFT },
-        { BTN_EAST,   BTN_RIGHT },
-        { BTN_NORTH,  BTN_MIDDLE },
-    };
+	const std::unordered_map<int, Action> InputMap = {
+		{ BTN_SOUTH, { ActionType::MouseButton, BTN_LEFT   } },
+		{ BTN_EAST,  { ActionType::MouseButton, BTN_RIGHT  } },
+		{ BTN_NORTH, { ActionType::MouseButton, BTN_MIDDLE } },
+	};
 }

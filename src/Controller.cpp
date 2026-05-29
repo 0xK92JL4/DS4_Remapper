@@ -5,7 +5,7 @@
 /*│  By: 0xK92JL4                                               ▒▒▒▒          │*/
 /*│                                                           ▒▒▒▒▒▒▒▒        │*/
 /*│  Created: 2026/05/20 21:21:58 by 0xK92JL4                 ▒▒▒▒▒▒▒▒        │*/
-/*│  Updated: 2026/05/27 22:54:12 by 0xK92JL4                 ▒▒    ▒▒        │*/
+/*│  Updated: 2026/05/29 16:30:21 by 0xK92JL4                 ▒▒    ▒▒        │*/
 /*│                                                                           │*/
 /*└───────────────────────────────────────────────────────────────────────────┘*/
 
@@ -49,10 +49,16 @@ void Controller::HandleDeviceEvent(InputDevice* device, VirtualMouse& virtual_mo
 			}
 			else if (ev.type == EV_KEY)
 			{
-				auto it = Config::ButtonMap.find(ev.code);
-				if (it != Config::ButtonMap.end())
+				auto it = Config::InputMap.find(ev.code);
+
+				if (it != Config::InputMap.end())
 				{
-					virtual_mouse.SendButton(it->second, ev.value);
+					const Action& action = it->second;
+
+					if (action.type == ActionType::MouseButton)
+					{
+						virtual_mouse.SendButton(action.code, ev.value);
+					}
 				}
 			}
 		}
