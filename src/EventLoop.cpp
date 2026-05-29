@@ -5,7 +5,7 @@
 /*│  By: 0xK92JL4                                               ▒▒▒▒          │*/
 /*│                                                           ▒▒▒▒▒▒▒▒        │*/
 /*│  Created: 2026/05/17 23:00:54 by 0xK92JL4                 ▒▒▒▒▒▒▒▒        │*/
-/*│  Updated: 2026/05/27 23:10:09 by 0xK92JL4                 ▒▒    ▒▒        │*/
+/*│  Updated: 2026/05/29 20:19:46 by 0xK92JL4                 ▒▒    ▒▒        │*/
 /*│                                                                           │*/
 /*└───────────────────────────────────────────────────────────────────────────┘*/
 
@@ -49,7 +49,7 @@ void EventLoop::Run()
 		for (int i = 0; i < num_ready; i++)
 		{
 			auto* device = static_cast<InputDevice*>(_returned_events[i].data.ptr);
-			_controller.HandleDeviceEvent(device, _mouse);
+			_controller.HandleDeviceEvent(device, _mouse, _keyboard);
 		}
 
 		auto current_time = std::chrono::steady_clock::now();

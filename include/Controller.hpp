@@ -5,7 +5,7 @@
 /*│  By: 0xK92JL4                                               ▒▒▒▒          │*/
 /*│                                                           ▒▒▒▒▒▒▒▒        │*/
 /*│  Created: 2026/05/19 20:20:08 by 0xK92JL4                 ▒▒▒▒▒▒▒▒        │*/
-/*│  Updated: 2026/05/27 22:33:00 by 0xK92JL4                 ▒▒    ▒▒        │*/
+/*│  Updated: 2026/05/29 20:16:48 by 0xK92JL4                 ▒▒    ▒▒        │*/
 /*│                                                                           │*/
 /*└───────────────────────────────────────────────────────────────────────────┘*/
 
@@ -15,6 +15,7 @@
 #include "Controller/Battery.hpp"
 #include "StickProcessor.hpp"
 #include "InputDevice.hpp"
+#include "VirtualKeyboard.hpp"
 #include "VirtualMouse.hpp"
 #include "structs.hpp"
 
@@ -49,7 +50,7 @@ class Controller
 		InputDevice* GetDs4Device();
 		InputDevice* GetTouchpadDevice();
 
-		void	HandleDeviceEvent(InputDevice* device, VirtualMouse& virtual_mouse);
+		void	HandleDeviceEvent(InputDevice*, VirtualMouse&, VirtualKeyboard&);
 		void	Update(float dt);
 
 		void    UpdateLightBar();

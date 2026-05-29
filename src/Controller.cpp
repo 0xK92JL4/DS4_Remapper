@@ -5,7 +5,7 @@
 /*│  By: 0xK92JL4                                               ▒▒▒▒          │*/
 /*│                                                           ▒▒▒▒▒▒▒▒        │*/
 /*│  Created: 2026/05/20 21:21:58 by 0xK92JL4                 ▒▒▒▒▒▒▒▒        │*/
-/*│  Updated: 2026/05/29 16:30:21 by 0xK92JL4                 ▒▒    ▒▒        │*/
+/*│  Updated: 2026/05/29 20:17:43 by 0xK92JL4                 ▒▒    ▒▒        │*/
 /*│                                                                           │*/
 /*└───────────────────────────────────────────────────────────────────────────┘*/
 
@@ -31,7 +31,8 @@ Controller::Controller()
 InputDevice* Controller::GetDs4Device()      { return &_ds4; }
 InputDevice* Controller::GetTouchpadDevice() { return &_touchpad; }
 
-void Controller::HandleDeviceEvent(InputDevice* device, VirtualMouse& virtual_mouse)
+void Controller::HandleDeviceEvent(InputDevice* device,
+		VirtualMouse& virtual_mouse, VirtualKeyboard& virtual_keyboard)
 {
 	if (!device) return;
 
@@ -42,10 +43,13 @@ void Controller::HandleDeviceEvent(InputDevice* device, VirtualMouse& virtual_mo
 		{
 			if (ev.type == EV_ABS)
 			{
-				if (ev.code == ABS_X)  _axis_lx = ev.value;
-				if (ev.code == ABS_Y)  _axis_ly = ev.value;
-				if (ev.code == ABS_RX) _axis_rx = ev.value;
-				if (ev.code == ABS_RY) _axis_ry = ev.value;
+				switch (ev.code)
+				{
+					case ABS_X:  _axis_lx = ev.value; break;
+					case ABS_Y:  _axis_ly = ev.value; break;
+					case ABS_RX: _axis_rx = ev.value; break;
+					case ABS_RY: _axis_ry = ev.value; break;
+				}
 			}
 			else if (ev.type == EV_KEY)
 			{
@@ -58,6 +62,10 @@ void Controller::HandleDeviceEvent(InputDevice* device, VirtualMouse& virtual_mo
 					if (action.type == ActionType::MouseButton)
 					{
 						virtual_mouse.SendButton(action.code, ev.value);
+					}
+					else if (action.type == ActionType::KeyboardKey)
+					{
+						virtual_keyboard.SendKey(action.code, ev.value);
 					}
 				}
 			}

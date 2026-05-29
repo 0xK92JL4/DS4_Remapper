@@ -5,7 +5,7 @@
 /*│  By: 0xK92JL4                                               ▒▒▒▒          │*/
 /*│                                                           ▒▒▒▒▒▒▒▒        │*/
 /*│  Created: 2026/05/17 00:58:04 by 0xK92JL4                 ▒▒▒▒▒▒▒▒        │*/
-/*│  Updated: 2026/05/29 17:09:40 by 0xK92JL4                 ▒▒    ▒▒        │*/
+/*│  Updated: 2026/05/29 20:26:37 by 0xK92JL4                 ▒▒    ▒▒        │*/
 /*│                                                                           │*/
 /*└───────────────────────────────────────────────────────────────────────────┘*/
 
@@ -38,10 +38,10 @@ namespace Config
     const char* const DS4_DEVICE = "/dev/input/event21";
     const char* const TOUCHPAD_DEVICE = "/dev/input/event23";
 
-	const char* const LED_R = "/sys/class/leds/input22:red/brightness";
-	const char* const LED_G = "/sys/class/leds/input22:green/brightness";
-	const char* const LED_B = "/sys/class/leds/input22:blue/brightness";
-	const char* const LED_GLOBAL = "/sys/class/leds/input22:global/brightness";
+	const char* const LED_R = "/sys/class/leds/input26:red/brightness";
+	const char* const LED_G = "/sys/class/leds/input26:green/brightness";
+	const char* const LED_B = "/sys/class/leds/input26:blue/brightness";
+	const char* const LED_GLOBAL = "/sys/class/leds/input26:global/brightness";
 
 	const char* const BATTERY_CAPACITY
 		= "/sys/class/power_supply/ps-controller-battery-28:c1:3c:48:43:83/capacity";
@@ -52,5 +52,6 @@ namespace Config
 		{ BTN_SOUTH, { ActionType::MouseButton, BTN_LEFT   } },
 		{ BTN_EAST,  { ActionType::MouseButton, BTN_RIGHT  } },
 		{ BTN_NORTH, { ActionType::MouseButton, BTN_MIDDLE } },
+		/*{ BTN_WEST,  { ActionType::KeyboardKey, KEY_E      } } // keyboard example */
 	};
 }

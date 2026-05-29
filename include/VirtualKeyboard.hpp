@@ -1,39 +1,32 @@
 /*┌───────────────────────────────────────────────────────────────────────────┐*/
 /*│                                                                           │*/
-/*│  EventLoop.hpp                                          ▒▒▒▒    ▒▒▒▒      │*/
+/*│  VirtualKeyboard.hpp                                    ▒▒▒▒    ▒▒▒▒      │*/
 /*│                                                         ▒▒▒▒    ▒▒▒▒      │*/
 /*│  By: 0xK92JL4                                               ▒▒▒▒          │*/
 /*│                                                           ▒▒▒▒▒▒▒▒        │*/
-/*│  Created: 2026/05/17 23:00:29 by 0xK92JL4                 ▒▒▒▒▒▒▒▒        │*/
-/*│  Updated: 2026/05/29 20:19:37 by 0xK92JL4                 ▒▒    ▒▒        │*/
+/*│  Created: 2026/05/29 18:43:48 by 0xK92JL4                 ▒▒▒▒▒▒▒▒        │*/
+/*│  Updated: 2026/05/29 20:05:46 by 0xK92JL4                 ▒▒    ▒▒        │*/
 /*│                                                                           │*/
 /*└───────────────────────────────────────────────────────────────────────────┘*/
 
 #pragma once
 
-#include "Controller.hpp"
-#include "DeviceManager.hpp"
-#include "VirtualMouse.hpp"
+#include "structs.hpp"
+#include <libevdev/libevdev-uinput.h>
 
-#include <chrono>
-#include <sys/epoll.h>
-
-class EventLoop
+class VirtualKeyboard
 {
 	private:
-		Controller		_controller;
-		DeviceManager	_manager;
-		VirtualKeyboard	_keyboard;
-		VirtualMouse	_mouse;
+		struct libevdev_uinput* _uidev = nullptr;
 
-		static constexpr int	MAX_EPOLL_EVENTS = 4;
-		struct epoll_event		_returned_events[MAX_EPOLL_EVENTS];
-
-		std::chrono::steady_clock::time_point _last_time;
-		std::chrono::steady_clock::time_point _battery_last_time;
-		std::chrono::steady_clock::time_point _led_last_time;
+		void Emit(unsigned int type, unsigned int code, int value);
 
 	public:
-		EventLoop();
-		void Run();
+		VirtualKeyboard();
+		~VirtualKeyboard();
+
+		VirtualKeyboard(const VirtualKeyboard&) = delete;
+		VirtualKeyboard& operator=(const VirtualKeyboard&) = delete;
+
+		void SendKey(int virtual_key_code, int value);
 };
