@@ -5,7 +5,7 @@
 /*│  By: 0xK92JL4                                               ▒▒▒▒          │*/
 /*│                                                           ▒▒▒▒▒▒▒▒        │*/
 /*│  Created: 2026/05/20 23:29:57 by 0xK92JL4                 ▒▒▒▒▒▒▒▒        │*/
-/*│  Updated: 2026/05/30 17:58:15 by 0xK92JL4                 ▒▒    ▒▒        │*/
+/*│  Updated: 2026/05/30 22:13:28 by 0xK92JL4                 ▒▒    ▒▒        │*/
 /*│                                                                           │*/
 /*└───────────────────────────────────────────────────────────────────────────┘*/
 
@@ -54,7 +54,7 @@ struct Action
 		return Action(ActionType::KeyboardKey, key_code);
 	}
 
-	static Action Macro(std::initializer_list<Action> actions)
+	static Action Macro(std::vector<Action> actions)
 	{
 		Action parent(ActionType::Macro, 0);
 		parent.macro_keys.reserve(actions.size());
@@ -65,7 +65,7 @@ struct Action
 		return parent;
 	}
 
-	static Action Command(std::initializer_list<std::string> args)
+	static Action Command(std::vector<std::string> args)
 	{
 		Action a(ActionType::Command, 0);
 		a.cmd_args = args;
