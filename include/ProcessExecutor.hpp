@@ -1,40 +1,24 @@
 /*┌───────────────────────────────────────────────────────────────────────────┐*/
 /*│                                                                           │*/
-/*│  structs.hpp                                            ▒▒▒▒    ▒▒▒▒      │*/
+/*│  ProcessExexcutor.hpp                                   ▒▒▒▒    ▒▒▒▒      │*/
 /*│                                                         ▒▒▒▒    ▒▒▒▒      │*/
 /*│  By: 0xK92JL4                                               ▒▒▒▒          │*/
 /*│                                                           ▒▒▒▒▒▒▒▒        │*/
-/*│  Created: 2026/05/20 23:29:57 by 0xK92JL4                 ▒▒▒▒▒▒▒▒        │*/
-/*│  Updated: 2026/05/30 14:50:29 by 0xK92JL4                 ▒▒    ▒▒        │*/
+/*│  Created: 2026/05/30 14:12:45 by 0xK92JL4                 ▒▒▒▒▒▒▒▒        │*/
+/*│  Updated: 2026/05/30 14:13:14 by 0xK92JL4                 ▒▒    ▒▒        │*/
 /*│                                                                           │*/
 /*└───────────────────────────────────────────────────────────────────────────┘*/
 
 #pragma once
 
-struct Vec2
+#include <vector>
+#include <string>
+
+class ProcessExecutor
 {
-	int x;
-	int y;
+	public:
+		ProcessExecutor() = delete;
+
+		static bool Execute(const std::vector<std::string>& args);
 };
 
-enum class ActionType
-{
-	MouseButton,
-	KeyboardKey,
-	Command,
-	Macro
-};
-
-struct MacroTarget
-{
-    ActionType type;
-    int        code;
-};
-
-struct Action
-{
-	ActionType					type;
-	int							code;
-	std::vector<MacroTarget>	macro_keys;
-	std::vector<std::string>	cmd_args;
-};

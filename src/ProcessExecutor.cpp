@@ -1,40 +1,37 @@
 /*┌───────────────────────────────────────────────────────────────────────────┐*/
 /*│                                                                           │*/
-/*│  structs.hpp                                            ▒▒▒▒    ▒▒▒▒      │*/
+/*│  ProcessExecutor.cpp                                    ▒▒▒▒    ▒▒▒▒      │*/
 /*│                                                         ▒▒▒▒    ▒▒▒▒      │*/
 /*│  By: 0xK92JL4                                               ▒▒▒▒          │*/
 /*│                                                           ▒▒▒▒▒▒▒▒        │*/
-/*│  Created: 2026/05/20 23:29:57 by 0xK92JL4                 ▒▒▒▒▒▒▒▒        │*/
-/*│  Updated: 2026/05/30 14:50:29 by 0xK92JL4                 ▒▒    ▒▒        │*/
+/*│  Created: 2026/05/30 14:06:00 by 0xK92JL4                 ▒▒▒▒▒▒▒▒        │*/
+/*│  Updated: 2026/05/30 14:12:08 by 0xK92JL4                 ▒▒    ▒▒        │*/
 /*│                                                                           │*/
 /*└───────────────────────────────────────────────────────────────────────────┘*/
 
-#pragma once
+#include "ProcessExecutor.hpp"
+#include <spawn.h>
+#include <vector>
+#include <string>
 
-struct Vec2
-{
-	int x;
-	int y;
-};
+extern char** environ;
 
-enum class ActionType
+bool ProcessExecutor::Execute(const std::vector<std::string>& args)
 {
-	MouseButton,
-	KeyboardKey,
-	Command,
-	Macro
-};
+	if (args.empty())
+		return false;
 
-struct MacroTarget
-{
-    ActionType type;
-    int        code;
-};
+	std::vector<char*> av;
+	av.reserve(args.size() + 1);
 
-struct Action
-{
-	ActionType					type;
-	int							code;
-	std::vector<MacroTarget>	macro_keys;
-	std::vector<std::string>	cmd_args;
-};
+	for (const auto& arg : args)
+	{
+		av.push_back(const_cast<char*>(arg.c_str()));
+	}
+	av.push_back(nullptr);
+
+	pid_t pid;
+	return (
+		posix_spawn(&pid, av[0], nullptr, nullptr, av.data(), environ) == 0
+	);
+}
