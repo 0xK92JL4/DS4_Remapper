@@ -5,7 +5,7 @@
 /*│  By: 0xK92JL4                                               ▒▒▒▒          │*/
 /*│                                                           ▒▒▒▒▒▒▒▒        │*/
 /*│  Created: 2026/05/20 23:29:57 by 0xK92JL4                 ▒▒▒▒▒▒▒▒        │*/
-/*│  Updated: 2026/05/30 22:13:28 by 0xK92JL4                 ▒▒    ▒▒        │*/
+/*│  Updated: 2026/05/31 00:52:44 by 0xK92JL4                 ▒▒    ▒▒        │*/
 /*│                                                                           │*/
 /*└───────────────────────────────────────────────────────────────────────────┘*/
 
@@ -25,10 +25,10 @@ enum class ActionType
 	MouseButton,
 	KeyboardKey,
 	Command,
-	Macro
+	Binding
 };
 
-struct MacroTarget
+struct BindingTarget
 {
 	ActionType	type;
 	int			code;
@@ -38,7 +38,7 @@ struct Action
 {
 	ActionType					type;
 	int							code;
-	std::vector<MacroTarget>	macro_keys;
+	std::vector<BindingTarget>	binding_keys;
 	std::vector<std::string>	cmd_args;
 
 	Action(ActionType t, int c)
@@ -54,15 +54,11 @@ struct Action
 		return Action(ActionType::KeyboardKey, key_code);
 	}
 
-	static Action Macro(std::vector<Action> actions)
+	static Action Binding(std::vector<BindingTarget> targets)
 	{
-		Action parent(ActionType::Macro, 0);
-		parent.macro_keys.reserve(actions.size());
-
-		for (const auto& act : actions)
-			parent.macro_keys.push_back({act.type, act.code});
-
-		return parent;
+		Action a(ActionType::Binding, 0);
+		a.binding_keys = std::move(targets);
+		return a;
 	}
 
 	static Action Command(std::vector<std::string> args)

@@ -5,7 +5,7 @@
 /*│  By: 0xK92JL4                                               ▒▒▒▒          │*/
 /*│                                                           ▒▒▒▒▒▒▒▒        │*/
 /*│  Created: 2026/05/29 18:47:23 by 0xK92JL4                 ▒▒▒▒▒▒▒▒        │*/
-/*│  Updated: 2026/05/29 19:58:41 by 0xK92JL4                 ▒▒    ▒▒        │*/
+/*│  Updated: 2026/05/31 01:20:38 by 0xK92JL4                 ▒▒    ▒▒        │*/
 /*│                                                                           │*/
 /*└───────────────────────────────────────────────────────────────────────────┘*/
 
@@ -31,6 +31,16 @@ VirtualKeyboard::VirtualKeyboard()
 		if (action.type == ActionType::KeyboardKey)
 		{
 			libevdev_enable_event_code(vdev, EV_KEY, action.code, nullptr);
+		}
+		else if (action.type == ActionType::Binding)
+		{
+			for (const auto& b : action.binding_keys)
+			{
+				if (b.type == ActionType::KeyboardKey)
+				{
+					libevdev_enable_event_code(vdev, EV_KEY, b.code, nullptr);
+				}
+			}
 		}
 	}
 

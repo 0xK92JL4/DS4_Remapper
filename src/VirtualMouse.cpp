@@ -5,7 +5,7 @@
 /*│  By: 0xK92JL4                                               ▒▒▒▒          │*/
 /*│                                                           ▒▒▒▒▒▒▒▒        │*/
 /*│  Created: 2026/05/17 00:59:17 by 0xK92JL4                 ▒▒▒▒▒▒▒▒        │*/
-/*│  Updated: 2026/05/29 18:51:06 by 0xK92JL4                 ▒▒    ▒▒        │*/
+/*│  Updated: 2026/05/31 01:20:59 by 0xK92JL4                 ▒▒    ▒▒        │*/
 /*│                                                                           │*/
 /*└───────────────────────────────────────────────────────────────────────────┘*/
 
@@ -37,6 +37,16 @@ VirtualMouse::VirtualMouse()
 		if (action.type == ActionType::MouseButton)
 		{
 			libevdev_enable_event_code(vdev, EV_KEY, action.code, nullptr);
+		}
+		else if (action.type == ActionType::Binding)
+		{
+			for (const auto& b : action.binding_keys)
+			{
+				if (b.type == ActionType::MouseButton)
+				{
+					libevdev_enable_event_code(vdev, EV_KEY, b.code, nullptr);
+				}
+			}
 		}
 	}
 

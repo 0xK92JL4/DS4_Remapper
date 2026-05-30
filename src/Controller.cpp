@@ -5,11 +5,12 @@
 /*│  By: 0xK92JL4                                               ▒▒▒▒          │*/
 /*│                                                           ▒▒▒▒▒▒▒▒        │*/
 /*│  Created: 2026/05/20 21:21:58 by 0xK92JL4                 ▒▒▒▒▒▒▒▒        │*/
-/*│  Updated: 2026/05/30 19:33:46 by 0xK92JL4                 ▒▒    ▒▒        │*/
+/*│  Updated: 2026/05/31 00:48:49 by 0xK92JL4                 ▒▒    ▒▒        │*/
 /*│                                                                           │*/
 /*└───────────────────────────────────────────────────────────────────────────┘*/
 
 #include "ProcessExecutor.hpp"
+#include "BindingExecutor.hpp"
 #include "Controller.hpp"
 #include "Config.hpp"
 #include <cmath>
@@ -67,6 +68,13 @@ void Controller::HandleDeviceEvent(InputDevice* device,
 					else if (action.type == ActionType::KeyboardKey)
 					{
 						virtual_keyboard.SendKey(action.code, ev.value);
+					}
+					else if (action.type == ActionType::Binding)
+					{
+						if (ev.value == 1)
+							BindingExecutor::Press(action, virtual_mouse, virtual_keyboard);
+						else if (ev.value == 0)
+							BindingExecutor::Release(action, virtual_mouse, virtual_keyboard);
 					}
 					else if (action.type == ActionType::Command)
 					{
