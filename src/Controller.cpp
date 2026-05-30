@@ -5,10 +5,11 @@
 /*│  By: 0xK92JL4                                               ▒▒▒▒          │*/
 /*│                                                           ▒▒▒▒▒▒▒▒        │*/
 /*│  Created: 2026/05/20 21:21:58 by 0xK92JL4                 ▒▒▒▒▒▒▒▒        │*/
-/*│  Updated: 2026/05/29 20:17:43 by 0xK92JL4                 ▒▒    ▒▒        │*/
+/*│  Updated: 2026/05/30 19:33:46 by 0xK92JL4                 ▒▒    ▒▒        │*/
 /*│                                                                           │*/
 /*└───────────────────────────────────────────────────────────────────────────┘*/
 
+#include "ProcessExecutor.hpp"
 #include "Controller.hpp"
 #include "Config.hpp"
 #include <cmath>
@@ -66,6 +67,11 @@ void Controller::HandleDeviceEvent(InputDevice* device,
 					else if (action.type == ActionType::KeyboardKey)
 					{
 						virtual_keyboard.SendKey(action.code, ev.value);
+					}
+					else if (action.type == ActionType::Command)
+					{
+						if (ev.value == 1)
+							ProcessExecutor::Execute(action.cmd_args);
 					}
 				}
 			}
