@@ -5,7 +5,7 @@
 /*│  By: 0xK92JL4                                               ▒▒▒▒          │*/
 /*│                                                           ▒▒▒▒▒▒▒▒        │*/
 /*│  Created: 2026/05/17 00:58:04 by 0xK92JL4                 ▒▒▒▒▒▒▒▒        │*/
-/*│  Updated: 2026/05/31 02:31:13 by 0xK92JL4                 ▒▒    ▒▒        │*/
+/*│  Updated: 2026/05/31 22:59:35 by 0xK92JL4                 ▒▒    ▒▒        │*/
 /*│                                                                           │*/
 /*└───────────────────────────────────────────────────────────────────────────┘*/
 
@@ -48,10 +48,10 @@ namespace Config
     const char* const DS4_DEVICE = "/dev/input/event21";
     const char* const TOUCHPAD_DEVICE = "/dev/input/event23";
 
-	const char* const LED_R =      "/sys/class/leds/input43:red/brightness";
-	const char* const LED_G =      "/sys/class/leds/input43:green/brightness";
-	const char* const LED_B =      "/sys/class/leds/input43:blue/brightness";
-	const char* const LED_GLOBAL = "/sys/class/leds/input43:global/brightness";
+	const char* const LED_R =      "/sys/class/leds/input22:red/brightness";
+	const char* const LED_G =      "/sys/class/leds/input22:green/brightness";
+	const char* const LED_B =      "/sys/class/leds/input22:blue/brightness";
+	const char* const LED_GLOBAL = "/sys/class/leds/input22:global/brightness";
 
 	const char* const BATTERY_CAPACITY
 		= "/sys/class/power_supply/ps-controller-battery-28:c1:3c:48:43:83/capacity";

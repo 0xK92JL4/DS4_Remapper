@@ -5,7 +5,7 @@
 /*│  By: 0xK92JL4                                               ▒▒▒▒          │*/
 /*│                                                           ▒▒▒▒▒▒▒▒        │*/
 /*│  Created: 2026/05/19 20:20:08 by 0xK92JL4                 ▒▒▒▒▒▒▒▒        │*/
-/*│  Updated: 2026/05/31 02:26:04 by 0xK92JL4                 ▒▒    ▒▒        │*/
+/*│  Updated: 2026/05/31 22:59:04 by 0xK92JL4                 ▒▒    ▒▒        │*/
 /*│                                                                           │*/
 /*└───────────────────────────────────────────────────────────────────────────┘*/
 
@@ -39,6 +39,10 @@ class Controller
 
 		Vec2 _move   = {0,0};
 		Vec2 _scroll = {0,0};
+
+		void ExecuteAction(const Action&, int value, VirtualMouse&, VirtualKeyboard&);
+		void HandleKeyEvent(const input_event&, VirtualMouse&, VirtualKeyboard&);
+		void HandleAbsEvent(const input_event& ev);
 
 	public:
 		Controller();

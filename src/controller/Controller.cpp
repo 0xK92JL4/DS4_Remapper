@@ -5,7 +5,7 @@
 /*│  By: 0xK92JL4                                               ▒▒▒▒          │*/
 /*│                                                           ▒▒▒▒▒▒▒▒        │*/
 /*│  Created: 2026/05/20 21:21:58 by 0xK92JL4                 ▒▒▒▒▒▒▒▒        │*/
-/*│  Updated: 2026/05/31 02:30:22 by 0xK92JL4                 ▒▒    ▒▒        │*/
+/*│  Updated: 2026/05/31 22:54:41 by 0xK92JL4                 ▒▒    ▒▒        │*/
 /*│                                                                           │*/
 /*└───────────────────────────────────────────────────────────────────────────┘*/
 
@@ -27,62 +27,89 @@ Controller::Controller()
 	, _scroll_stick(Config::SCROLL_SENS_X, Config::SCROLL_SENS_Y) {}
 
 /*┌───────────────────────────────────────────────────────────────────────────┐*/
+/*│                                Private                                    │*/
+/*└───────────────────────────────────────────────────────────────────────────┘*/
+
+void Controller::HandleAbsEvent(const input_event& ev)
+{
+	switch (ev.code)
+	{
+		case ABS_X:   _axis_lx = ev.value;  break;
+		case ABS_Y:   _axis_ly = ev.value;  break;
+		case ABS_RX:  _axis_rx = ev.value;  break;
+		case ABS_RY:  _axis_ry = ev.value;  break;
+	}
+}
+
+void Controller::HandleKeyEvent(const input_event& ev, VirtualMouse& mouse,
+		VirtualKeyboard& keyboard)
+{
+	auto it = Config::InputMap.find(ev.code);
+	if (it == Config::InputMap.end()) return;
+
+	ExecuteAction(it->second, ev.value, mouse, keyboard);
+}
+
+void Controller::ExecuteAction(const Action& action, int value,
+		VirtualMouse& mouse, VirtualKeyboard& keyboard)
+{
+	switch (action.type)
+	{
+		case ActionType::MouseButton:
+			mouse.SendButton(action.code, value);
+			break;
+
+		case ActionType::KeyboardKey:
+			keyboard.SendKey(action.code, value);
+			break;
+
+		case ActionType::Binding:
+		{
+			if (value == 1)
+				BindingExecutor::Press(action, mouse, keyboard);
+			else if (value == 0)
+				BindingExecutor::Release(action, mouse, keyboard);
+			break;
+		}
+
+		case ActionType::Command:
+		{
+			if (value == 1)
+				ProcessExecutor::Execute(action.cmd_args);
+			break;
+		}
+	}
+}
+
+/*┌───────────────────────────────────────────────────────────────────────────┐*/
 /*│                                 Public                                    │*/
 /*└───────────────────────────────────────────────────────────────────────────┘*/
 
 InputDevice* Controller::GetDs4Device()      { return &_ds4; }
 InputDevice* Controller::GetTouchpadDevice() { return &_touchpad; }
 
-void Controller::HandleDeviceEvent(InputDevice* device,
-		VirtualMouse& virtual_mouse, VirtualKeyboard& virtual_keyboard)
+void Controller::HandleDeviceEvent(InputDevice* device, VirtualMouse& mouse,
+		VirtualKeyboard& keyboard)
 {
-	if (!device) return;
+	if (!device)
+		return;
 
 	struct input_event ev;
+
 	while (device->NextEvent(ev))
 	{
-		if (device == &_ds4)
+		if (device != &_ds4)
+			continue;
+
+		switch (ev.type)
 		{
-			if (ev.type == EV_ABS)
-			{
-				switch (ev.code)
-				{
-					case ABS_X:  _axis_lx = ev.value; break;
-					case ABS_Y:  _axis_ly = ev.value; break;
-					case ABS_RX: _axis_rx = ev.value; break;
-					case ABS_RY: _axis_ry = ev.value; break;
-				}
-			}
-			else if (ev.type == EV_KEY)
-			{
-				auto it = Config::InputMap.find(ev.code);
+			case EV_ABS:
+				HandleAbsEvent(ev);
+				break;
 
-				if (it != Config::InputMap.end())
-				{
-					const Action& action = it->second;
-
-					if (action.type == ActionType::MouseButton)
-					{
-						virtual_mouse.SendButton(action.code, ev.value);
-					}
-					else if (action.type == ActionType::KeyboardKey)
-					{
-						virtual_keyboard.SendKey(action.code, ev.value);
-					}
-					else if (action.type == ActionType::Binding)
-					{
-						if (ev.value == 1)
-							BindingExecutor::Press(action, virtual_mouse, virtual_keyboard);
-						else if (ev.value == 0)
-							BindingExecutor::Release(action, virtual_mouse, virtual_keyboard);
-					}
-					else if (action.type == ActionType::Command)
-					{
-						if (ev.value == 1)
-							ProcessExecutor::Execute(action.cmd_args);
-					}
-				}
-			}
+			case EV_KEY:
+				HandleKeyEvent(ev, mouse, keyboard);
+				break;
 		}
 	}
 }
