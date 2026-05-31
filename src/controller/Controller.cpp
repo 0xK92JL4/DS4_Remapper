@@ -5,7 +5,7 @@
 /*│  By: 0xK92JL4                                               ▒▒▒▒          │*/
 /*│                                                           ▒▒▒▒▒▒▒▒        │*/
 /*│  Created: 2026/05/20 21:21:58 by 0xK92JL4                 ▒▒▒▒▒▒▒▒        │*/
-/*│  Updated: 2026/05/31 22:54:41 by 0xK92JL4                 ▒▒    ▒▒        │*/
+/*│  Updated: 2026/05/31 23:05:52 by 0xK92JL4                 ▒▒    ▒▒        │*/
 /*│                                                                           │*/
 /*└───────────────────────────────────────────────────────────────────────────┘*/
 
@@ -65,16 +65,16 @@ void Controller::ExecuteAction(const Action& action, int value,
 
 		case ActionType::Binding:
 		{
-			if (value == 1)
+			if (value == Input::PRESS)
 				BindingExecutor::Press(action, mouse, keyboard);
-			else if (value == 0)
+			else if (value == Input::RELEASE)
 				BindingExecutor::Release(action, mouse, keyboard);
 			break;
 		}
 
 		case ActionType::Command:
 		{
-			if (value == 1)
+			if (value == Input::PRESS)
 				ProcessExecutor::Execute(action.cmd_args);
 			break;
 		}

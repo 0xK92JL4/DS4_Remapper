@@ -5,7 +5,7 @@
 /*│  By: 0xK92JL4                                               ▒▒▒▒          │*/
 /*│                                                           ▒▒▒▒▒▒▒▒        │*/
 /*│  Created: 2026/05/20 23:29:57 by 0xK92JL4                 ▒▒▒▒▒▒▒▒        │*/
-/*│  Updated: 2026/05/31 01:59:57 by 0xK92JL4                 ▒▒    ▒▒        │*/
+/*│  Updated: 2026/05/31 23:04:03 by 0xK92JL4                 ▒▒    ▒▒        │*/
 /*│                                                                           │*/
 /*└───────────────────────────────────────────────────────────────────────────┘*/
 
@@ -13,6 +13,13 @@
 
 #include <vector>
 #include <string>
+
+namespace Input
+{
+	constexpr int RELEASE = 0;
+	constexpr int PRESS   = 1;
+	constexpr int REPEAT  = 2;
+}
 
 struct Vec2
 {
