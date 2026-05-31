@@ -5,7 +5,7 @@
 /*│  By: 0xK92JL4                                               ▒▒▒▒          │*/
 /*│                                                           ▒▒▒▒▒▒▒▒        │*/
 /*│  Created: 2026/05/17 00:58:04 by 0xK92JL4                 ▒▒▒▒▒▒▒▒        │*/
-/*│  Updated: 2026/05/31 01:03:37 by 0xK92JL4                 ▒▒    ▒▒        │*/
+/*│  Updated: 2026/05/31 02:04:44 by 0xK92JL4                 ▒▒    ▒▒        │*/
 /*│                                                                           │*/
 /*└───────────────────────────────────────────────────────────────────────────┘*/
 
@@ -74,9 +74,10 @@ namespace Config
 
 		{ BTN_WEST,    Command(TOGGLE_SVKBD)       },
 		{
-			BTN_THUMBR, Binding({
-				{ ActionType::KeyboardKey, KEY_LEFTALT },
-				{ ActionType::MouseButton, BTN_LEFT    }
+			BTN_THUMBR,
+			Binding({
+				BindingTarget::KeyboardKey(KEY_LEFTALT),
+				BindingTarget::MouseButton(BTN_LEFT)
 			})
 		},
 	};

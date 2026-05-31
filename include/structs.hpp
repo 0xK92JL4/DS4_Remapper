@@ -5,7 +5,7 @@
 /*│  By: 0xK92JL4                                               ▒▒▒▒          │*/
 /*│                                                           ▒▒▒▒▒▒▒▒        │*/
 /*│  Created: 2026/05/20 23:29:57 by 0xK92JL4                 ▒▒▒▒▒▒▒▒        │*/
-/*│  Updated: 2026/05/31 00:52:44 by 0xK92JL4                 ▒▒    ▒▒        │*/
+/*│  Updated: 2026/05/31 01:59:57 by 0xK92JL4                 ▒▒    ▒▒        │*/
 /*│                                                                           │*/
 /*└───────────────────────────────────────────────────────────────────────────┘*/
 
@@ -32,6 +32,16 @@ struct BindingTarget
 {
 	ActionType	type;
 	int			code;
+
+	static BindingTarget MouseButton(int c)
+	{
+		return {ActionType::MouseButton, c};
+	}
+
+	static BindingTarget KeyboardKey(int c)
+	{
+		return {ActionType::KeyboardKey, c};
+	}
 };
 
 struct Action
