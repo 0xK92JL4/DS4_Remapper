@@ -1,59 +1,85 @@
 /*┌───────────────────────────────────────────────────────────────────────────┐*/
 /*│                                                                           │*/
-/*│  DeviceManager.cpp                                      ▒▒▒▒    ▒▒▒▒      │*/
+/*│  EventLoop.cpp                                          ▒▒▒▒    ▒▒▒▒      │*/
 /*│                                                         ▒▒▒▒    ▒▒▒▒      │*/
 /*│  By: 0xK92JL4                                               ▒▒▒▒          │*/
 /*│                                                           ▒▒▒▒▒▒▒▒        │*/
-/*│  Created: 2026/05/17 00:58:56 by 0xK92JL4                 ▒▒▒▒▒▒▒▒        │*/
-/*│  Updated: 2026/05/18 22:55:12 by 0xK92JL4                 ▒▒    ▒▒        │*/
+/*│  Created: 2026/05/17 23:00:54 by 0xK92JL4                 ▒▒▒▒▒▒▒▒        │*/
+/*│  Updated: 2026/05/31 02:28:00 by 0xK92JL4                 ▒▒    ▒▒        │*/
 /*│                                                                           │*/
 /*└───────────────────────────────────────────────────────────────────────────┘*/
 
-#include "DeviceManager.hpp"
+#include "engine/EventLoop.hpp"
+#include "core/Config.hpp"
 
-#include <unistd.h>
-#include <stdexcept>
+#include <cmath>
+#include <cerrno>
 
 /*┌───────────────────────────────────────────────────────────────────────────┐*/
 /*│                         Constructor/Destructor                            │*/
 /*└───────────────────────────────────────────────────────────────────────────┘*/
 
-DeviceManager::DeviceManager()
+EventLoop::EventLoop()
 {
-    _epoll_fd = epoll_create1(0);
-    if (_epoll_fd < 0)
-	{
-        throw std::runtime_error("Failed to spin up backend epoll sub-instance");
-    }
-}
+	_manager.AddDevice(_controller.GetDs4Device());
+	_manager.AddDevice(_controller.GetTouchpadDevice());
 
-DeviceManager::~DeviceManager()
-{
-    if (_epoll_fd >= 0)
-	{
-        close(_epoll_fd);
-    }
+	_last_time = std::chrono::steady_clock::now();
+	_battery_last_time = std::chrono::steady_clock::now();
+	_led_last_time = std::chrono::steady_clock::now();
 }
 
 /*┌───────────────────────────────────────────────────────────────────────────┐*/
 /*│                                 Public                                    │*/
 /*└───────────────────────────────────────────────────────────────────────────┘*/
 
-void DeviceManager::AddDevice(InputDevice* device)
+void EventLoop::Run()
 {
-    if (!device) return;
-
-    struct epoll_event ev_config{};
-    ev_config.events = EPOLLIN;
-    ev_config.data.ptr = device;
-
-    if (epoll_ctl(_epoll_fd, EPOLL_CTL_ADD, device->GetFd(), &ev_config) < 0)
+	while (true)
 	{
-        throw std::runtime_error("Failed configuration attachment inside epoll node registry.");
-    }
-}
+		int timeout_ms = _controller.HasActiveMovement() ? 2 : 10;
 
-int DeviceManager::Wait(struct epoll_event* events, int max_events, int timeout_ms)
-{
-    return epoll_wait(_epoll_fd, events, max_events, timeout_ms);
+		int num_ready = _manager.Wait(_returned_events, MAX_EPOLL_EVENTS, timeout_ms);
+		if (num_ready < 0)
+		{
+			if (errno == EINTR) continue;
+			break;
+		}
+
+		for (int i = 0; i < num_ready; i++)
+		{
+			auto* device = static_cast<InputDevice*>(_returned_events[i].data.ptr);
+			_controller.HandleDeviceEvent(device, _mouse, _keyboard);
+		}
+
+		auto current_time = std::chrono::steady_clock::now();
+		auto elapsed = current_time - _last_time;
+		float dt = std::chrono::duration<float, std::milli>(elapsed).count();
+		_last_time = current_time;
+
+		if (dt > 100.0f)
+        {
+            dt = 100.0f;
+            _battery_last_time = current_time;
+            _led_last_time = current_time;
+        }
+
+		_controller.Update(dt);
+
+		if (current_time - _battery_last_time >= Config::BATTERY_REFRESH_RATE)
+		{
+			_battery_last_time += Config::BATTERY_REFRESH_RATE;
+			_controller.UpdateBattery();
+		}
+
+		if (current_time - _led_last_time >= Config::LED_REFRESH_RATE)
+		{
+			_led_last_time += Config::LED_REFRESH_RATE;
+			_controller.UpdateLightBar();
+		}
+
+		_mouse.Move(_controller.GetMove());
+		_mouse.Scroll(_controller.GetScroll());
+
+	}
 }

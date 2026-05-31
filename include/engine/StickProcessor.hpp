@@ -1,37 +1,32 @@
 /*┌───────────────────────────────────────────────────────────────────────────┐*/
 /*│                                                                           │*/
-/*│  ProcessExecutor.cpp                                    ▒▒▒▒    ▒▒▒▒      │*/
+/*│  StickProcessor.hpp                                     ▒▒▒▒    ▒▒▒▒      │*/
 /*│                                                         ▒▒▒▒    ▒▒▒▒      │*/
 /*│  By: 0xK92JL4                                               ▒▒▒▒          │*/
 /*│                                                           ▒▒▒▒▒▒▒▒        │*/
-/*│  Created: 2026/05/30 14:06:00 by 0xK92JL4                 ▒▒▒▒▒▒▒▒        │*/
-/*│  Updated: 2026/05/30 14:12:08 by 0xK92JL4                 ▒▒    ▒▒        │*/
+/*│  Created: 2026/05/17 00:58:39 by 0xK92JL4                 ▒▒▒▒▒▒▒▒        │*/
+/*│  Updated: 2026/05/31 02:26:13 by 0xK92JL4                 ▒▒    ▒▒        │*/
 /*│                                                                           │*/
 /*└───────────────────────────────────────────────────────────────────────────┘*/
 
-#include "ProcessExecutor.hpp"
-#include <spawn.h>
-#include <vector>
-#include <string>
+#pragma once
 
-extern char** environ;
+#include "core/structs.hpp"
 
-bool ProcessExecutor::Execute(const std::vector<std::string>& args)
+class StickProcessor
 {
-	if (args.empty())
-		return false;
+	private:
+		float _acc_x = 0.0f;
+		float _acc_y = 0.0f;
 
-	std::vector<char*> av;
-	av.reserve(args.size() + 1);
+		float _sens_x = 1.0f;
+		float _sens_y = 1.0f;
 
-	for (const auto& arg : args)
-	{
-		av.push_back(const_cast<char*>(arg.c_str()));
-	}
-	av.push_back(nullptr);
+		int ProcessAxis(int raw, float& accumulator, float sensitivity, float dt);
 
-	pid_t pid;
-	return (
-		posix_spawn(&pid, av[0], nullptr, nullptr, av.data(), environ) == 0
-	);
-}
+	public:
+		StickProcessor(float sensivity_x, float sensivity_y);
+
+		Vec2 Process(const Vec2& input, float dt);
+};
+

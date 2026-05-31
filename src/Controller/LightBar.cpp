@@ -5,12 +5,12 @@
 /*│  By: 0xK92JL4                                               ▒▒▒▒          │*/
 /*│                                                           ▒▒▒▒▒▒▒▒        │*/
 /*│  Created: 2026/05/21 23:48:14 by 0xK92JL4                 ▒▒▒▒▒▒▒▒        │*/
-/*│  Updated: 2026/05/25 01:19:58 by 0xK92JL4                 ▒▒    ▒▒        │*/
+/*│  Updated: 2026/05/31 02:30:36 by 0xK92JL4                 ▒▒    ▒▒        │*/
 /*│                                                                           │*/
 /*└───────────────────────────────────────────────────────────────────────────┘*/
 
-#include "Controller/LightBar.hpp"
-#include "Config.hpp"
+#include "controller/LightBar.hpp"
+#include "core/Config.hpp"
 
 #include <fcntl.h>
 #include <unistd.h>

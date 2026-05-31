@@ -1,52 +1,72 @@
 /*┌───────────────────────────────────────────────────────────────────────────┐*/
 /*│                                                                           │*/
-/*│  BindingExecutor.cpp                                    ▒▒▒▒    ▒▒▒▒      │*/
+/*│  InputDevice.cpp                                        ▒▒▒▒    ▒▒▒▒      │*/
 /*│                                                         ▒▒▒▒    ▒▒▒▒      │*/
 /*│  By: 0xK92JL4                                               ▒▒▒▒          │*/
 /*│                                                           ▒▒▒▒▒▒▒▒        │*/
-/*│  Created: 2026/05/31 00:29:52 by 0xK92JL4                 ▒▒▒▒▒▒▒▒        │*/
-/*│  Updated: 2026/05/31 00:55:57 by 0xK92JL4                 ▒▒    ▒▒        │*/
+/*│  Created: 2026/05/17 00:59:03 by 0xK92JL4                 ▒▒▒▒▒▒▒▒        │*/
+/*│  Updated: 2026/05/31 02:27:14 by 0xK92JL4                 ▒▒    ▒▒        │*/
 /*│                                                                           │*/
 /*└───────────────────────────────────────────────────────────────────────────┘*/
 
-#include "BindingExecutor.hpp"
+#include "input/InputDevice.hpp"
+
+#include <fcntl.h>
+#include <unistd.h>
+#include <stdexcept>
 
 /*┌───────────────────────────────────────────────────────────────────────────┐*/
-/*│                                Private                                    │*/
+/*│                         Constructor/Destructor                            │*/
 /*└───────────────────────────────────────────────────────────────────────────┘*/
 
-void BindingExecutor::Send(const BindingTarget& target, int value,
-		VirtualMouse& mouse, VirtualKeyboard& keyboard)
+InputDevice::InputDevice(const std::string& path, bool grab)
+	: _is_grabbed(grab)
 {
-	switch (target.type)
+    _fd = open(path.c_str(), O_RDONLY | O_NONBLOCK);
+    if (_fd < 0)
 	{
-		case ActionType::KeyboardKey:
-			keyboard.SendKey(target.code, value);
-			break;
+        throw std::runtime_error("Failed to open device path: " + path);
+    }
 
-		case ActionType::MouseButton:
-			mouse.SendButton(target.code, value);
-			break;
+    int rc = libevdev_new_from_fd(_fd, &_dev);
+    if (rc < 0)
+	{
+        close(_fd);
+        throw std::runtime_error("Failed to initialize libevdev context for: " + path);
+    }
 
-		default:
-			break;
-	}
+    if (_is_grabbed)
+	{
+        libevdev_grab(_dev, LIBEVDEV_GRAB);
+    }
+}
+
+InputDevice::~InputDevice()
+{
+    if (_dev)
+	{
+        if (_is_grabbed)
+		{
+            libevdev_grab(_dev, LIBEVDEV_UNGRAB);
+        }
+        libevdev_free(_dev);
+    }
+    if (_fd >= 0)
+	{
+        close(_fd);
+    }
 }
 
 /*┌───────────────────────────────────────────────────────────────────────────┐*/
 /*│                                 Public                                    │*/
 /*└───────────────────────────────────────────────────────────────────────────┘*/
 
-void BindingExecutor::Press(const Action& action,
-		VirtualMouse& mouse, VirtualKeyboard& keyboard)
-{
-    for (const auto& target : action.binding_keys)
-        Send(target, 1, mouse, keyboard);
-}
+int InputDevice::GetFd() const { return _fd; }
 
-void BindingExecutor::Release(const Action& action,
-		VirtualMouse& mouse, VirtualKeyboard& keyboard)
+bool InputDevice::NextEvent(struct input_event& ev)
 {
-    for (const auto& target : action.binding_keys)
-        Send(target, 0, mouse, keyboard);
+	return (
+		libevdev_next_event(_dev, LIBEVDEV_READ_FLAG_NORMAL, &ev)
+			== LIBEVDEV_READ_STATUS_SUCCESS
+	);
 }

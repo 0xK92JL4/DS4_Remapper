@@ -5,19 +5,19 @@
 /*│  By: 0xK92JL4                                               ▒▒▒▒          │*/
 /*│                                                           ▒▒▒▒▒▒▒▒        │*/
 /*│  Created: 2026/05/19 20:20:08 by 0xK92JL4                 ▒▒▒▒▒▒▒▒        │*/
-/*│  Updated: 2026/05/29 20:16:48 by 0xK92JL4                 ▒▒    ▒▒        │*/
+/*│  Updated: 2026/05/31 02:26:04 by 0xK92JL4                 ▒▒    ▒▒        │*/
 /*│                                                                           │*/
 /*└───────────────────────────────────────────────────────────────────────────┘*/
 
 #pragma once
 
-#include "Controller/LightBar.hpp"
-#include "Controller/Battery.hpp"
-#include "StickProcessor.hpp"
-#include "InputDevice.hpp"
-#include "VirtualKeyboard.hpp"
-#include "VirtualMouse.hpp"
-#include "structs.hpp"
+#include "controller/LightBar.hpp"
+#include "controller/Battery.hpp"
+#include "engine/StickProcessor.hpp"
+#include "input/InputDevice.hpp"
+#include "output/VirtualKeyboard.hpp"
+#include "output/VirtualMouse.hpp"
+#include "core/structs.hpp"
 
 #include <linux/input.h>
 

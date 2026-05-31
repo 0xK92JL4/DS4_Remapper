@@ -1,39 +1,28 @@
 /*┌───────────────────────────────────────────────────────────────────────────┐*/
 /*│                                                                           │*/
-/*│  EventLoop.hpp                                          ▒▒▒▒    ▒▒▒▒      │*/
+/*│  BindingExecutor.hpp                                    ▒▒▒▒    ▒▒▒▒      │*/
 /*│                                                         ▒▒▒▒    ▒▒▒▒      │*/
 /*│  By: 0xK92JL4                                               ▒▒▒▒          │*/
 /*│                                                           ▒▒▒▒▒▒▒▒        │*/
-/*│  Created: 2026/05/17 23:00:29 by 0xK92JL4                 ▒▒▒▒▒▒▒▒        │*/
-/*│  Updated: 2026/05/29 20:19:37 by 0xK92JL4                 ▒▒    ▒▒        │*/
+/*│  Created: 2026/05/31 00:26:31 by 0xK92JL4                 ▒▒▒▒▒▒▒▒        │*/
+/*│  Updated: 2026/05/31 02:29:42 by 0xK92JL4                 ▒▒    ▒▒        │*/
 /*│                                                                           │*/
 /*└───────────────────────────────────────────────────────────────────────────┘*/
 
+#include "core/structs.hpp"
+#include "output/VirtualMouse.hpp"
+#include "output/VirtualKeyboard.hpp"
+
 #pragma once
 
-#include "Controller.hpp"
-#include "DeviceManager.hpp"
-#include "VirtualMouse.hpp"
-
-#include <chrono>
-#include <sys/epoll.h>
-
-class EventLoop
+class BindingExecutor
 {
 	private:
-		Controller		_controller;
-		DeviceManager	_manager;
-		VirtualKeyboard	_keyboard;
-		VirtualMouse	_mouse;
-
-		static constexpr int	MAX_EPOLL_EVENTS = 4;
-		struct epoll_event		_returned_events[MAX_EPOLL_EVENTS];
-
-		std::chrono::steady_clock::time_point _last_time;
-		std::chrono::steady_clock::time_point _battery_last_time;
-		std::chrono::steady_clock::time_point _led_last_time;
+		static void Send(const BindingTarget&, int value, VirtualMouse&, VirtualKeyboard&);
 
 	public:
-		EventLoop();
-		void Run();
+		BindingExecutor() = delete;
+
+		static void Press(const Action&, VirtualMouse&, VirtualKeyboard&);
+		static void Release(const Action&, VirtualMouse&, VirtualKeyboard&);
 };

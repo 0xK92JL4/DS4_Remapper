@@ -1,28 +1,37 @@
 /*┌───────────────────────────────────────────────────────────────────────────┐*/
 /*│                                                                           │*/
-/*│  BindingExecutor.hpp                                    ▒▒▒▒    ▒▒▒▒      │*/
+/*│  ProcessExecutor.cpp                                    ▒▒▒▒    ▒▒▒▒      │*/
 /*│                                                         ▒▒▒▒    ▒▒▒▒      │*/
 /*│  By: 0xK92JL4                                               ▒▒▒▒          │*/
 /*│                                                           ▒▒▒▒▒▒▒▒        │*/
-/*│  Created: 2026/05/31 00:26:31 by 0xK92JL4                 ▒▒▒▒▒▒▒▒        │*/
-/*│  Updated: 2026/05/31 00:53:27 by 0xK92JL4                 ▒▒    ▒▒        │*/
+/*│  Created: 2026/05/30 14:06:00 by 0xK92JL4                 ▒▒▒▒▒▒▒▒        │*/
+/*│  Updated: 2026/05/31 02:27:31 by 0xK92JL4                 ▒▒    ▒▒        │*/
 /*│                                                                           │*/
 /*└───────────────────────────────────────────────────────────────────────────┘*/
 
-#include "structs.hpp"
-#include "VirtualMouse.hpp"
-#include "VirtualKeyboard.hpp"
+#include "engine/ProcessExecutor.hpp"
+#include <spawn.h>
+#include <vector>
+#include <string>
 
-#pragma once
+extern char** environ;
 
-class BindingExecutor
+bool ProcessExecutor::Execute(const std::vector<std::string>& args)
 {
-	private:
-		static void Send(const BindingTarget&, int value, VirtualMouse&, VirtualKeyboard&);
+	if (args.empty())
+		return false;
 
-	public:
-		BindingExecutor() = delete;
+	std::vector<char*> av;
+	av.reserve(args.size() + 1);
 
-		static void Press(const Action&, VirtualMouse&, VirtualKeyboard&);
-		static void Release(const Action&, VirtualMouse&, VirtualKeyboard&);
-};
+	for (const auto& arg : args)
+	{
+		av.push_back(const_cast<char*>(arg.c_str()));
+	}
+	av.push_back(nullptr);
+
+	pid_t pid;
+	return (
+		posix_spawn(&pid, av[0], nullptr, nullptr, av.data(), environ) == 0
+	);
+}

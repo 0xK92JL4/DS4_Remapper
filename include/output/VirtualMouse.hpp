@@ -1,32 +1,34 @@
 /*┌───────────────────────────────────────────────────────────────────────────┐*/
 /*│                                                                           │*/
-/*│  StickProcessor.hpp                                     ▒▒▒▒    ▒▒▒▒      │*/
+/*│  VirtualMouse.hpp                                       ▒▒▒▒    ▒▒▒▒      │*/
 /*│                                                         ▒▒▒▒    ▒▒▒▒      │*/
 /*│  By: 0xK92JL4                                               ▒▒▒▒          │*/
 /*│                                                           ▒▒▒▒▒▒▒▒        │*/
-/*│  Created: 2026/05/17 00:58:39 by 0xK92JL4                 ▒▒▒▒▒▒▒▒        │*/
-/*│  Updated: 2026/05/20 23:36:36 by 0xK92JL4                 ▒▒    ▒▒        │*/
+/*│  Created: 2026/05/17 00:58:46 by 0xK92JL4                 ▒▒▒▒▒▒▒▒        │*/
+/*│  Updated: 2026/05/31 02:26:34 by 0xK92JL4                 ▒▒    ▒▒        │*/
 /*│                                                                           │*/
 /*└───────────────────────────────────────────────────────────────────────────┘*/
 
 #pragma once
 
-#include "structs.hpp"
+#include "core/structs.hpp"
+#include <libevdev/libevdev-uinput.h>
 
-class StickProcessor
+class VirtualMouse
 {
 	private:
-		float _acc_x = 0.0f;
-		float _acc_y = 0.0f;
+		struct libevdev_uinput* _uidev = nullptr;
 
-		float _sens_x = 1.0f;
-		float _sens_y = 1.0f;
-
-		int ProcessAxis(int raw, float& accumulator, float sensitivity, float dt);
+		void Emit(unsigned int type, unsigned int code, int value);
 
 	public:
-		StickProcessor(float sensivity_x, float sensivity_y);
+		VirtualMouse();
+		~VirtualMouse();
 
-		Vec2 Process(const Vec2& input, float dt);
+		VirtualMouse(const VirtualMouse&) = delete;
+		VirtualMouse& operator=(const VirtualMouse&) = delete;
+
+		void Move(Vec2 move);
+		void Scroll(Vec2 scroll);
+		void SendButton(int virtual_button_code, int value);
 };
-

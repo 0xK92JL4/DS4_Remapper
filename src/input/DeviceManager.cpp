@@ -1,66 +1,59 @@
 /*┌───────────────────────────────────────────────────────────────────────────┐*/
 /*│                                                                           │*/
-/*│  StickProcessor.cpp                                     ▒▒▒▒    ▒▒▒▒      │*/
+/*│  DeviceManager.cpp                                      ▒▒▒▒    ▒▒▒▒      │*/
 /*│                                                         ▒▒▒▒    ▒▒▒▒      │*/
 /*│  By: 0xK92JL4                                               ▒▒▒▒          │*/
 /*│                                                           ▒▒▒▒▒▒▒▒        │*/
-/*│  Created: 2026/05/17 00:57:52 by 0xK92JL4                 ▒▒▒▒▒▒▒▒        │*/
-/*│  Updated: 2026/05/24 02:41:43 by 0xK92JL4                 ▒▒    ▒▒        │*/
+/*│  Created: 2026/05/17 00:58:56 by 0xK92JL4                 ▒▒▒▒▒▒▒▒        │*/
+/*│  Updated: 2026/05/31 02:27:05 by 0xK92JL4                 ▒▒    ▒▒        │*/
 /*│                                                                           │*/
 /*└───────────────────────────────────────────────────────────────────────────┘*/
 
-#include "StickProcessor.hpp"
-#include "Config.hpp"
+#include "input/DeviceManager.hpp"
 
-#include <cmath>
+#include <unistd.h>
+#include <stdexcept>
 
 /*┌───────────────────────────────────────────────────────────────────────────┐*/
 /*│                         Constructor/Destructor                            │*/
 /*└───────────────────────────────────────────────────────────────────────────┘*/
 
-StickProcessor::StickProcessor(float sensivity_x, float sensivity_y)
-	: _sens_x(sensivity_x)
-	, _sens_y(sensivity_y) {}
-
-/*┌───────────────────────────────────────────────────────────────────────────┐*/
-/*│                                Private                                    │*/
-/*└───────────────────────────────────────────────────────────────────────────┘*/
-
-int StickProcessor::ProcessAxis(
-	int raw,
-	float& accumulator,
-	float sensitivity,
-	float dt
-)
+DeviceManager::DeviceManager()
 {
-	if (std::abs(raw) <= Config::DEADZONE)
+    _epoll_fd = epoll_create1(0);
+    if (_epoll_fd < 0)
 	{
-		accumulator = 0.0f;
-		return 0;
-	}
+        throw std::runtime_error("Failed to spin up backend epoll sub-instance");
+    }
+}
 
-	float push_ratio = static_cast<float>(raw - (raw > 0 ? Config::DEADZONE : -Config::DEADZONE))
-		/ (Config::HALF_AXIS - Config::DEADZONE);
-
-	accumulator += push_ratio * sensitivity * dt;
-
-	int delta = static_cast<int>(accumulator);
-
-	accumulator -= delta;
-
-	return delta;
+DeviceManager::~DeviceManager()
+{
+    if (_epoll_fd >= 0)
+	{
+        close(_epoll_fd);
+    }
 }
 
 /*┌───────────────────────────────────────────────────────────────────────────┐*/
-/*│                                Public                                     │*/
+/*│                                 Public                                    │*/
 /*└───────────────────────────────────────────────────────────────────────────┘*/
 
-Vec2 StickProcessor::Process(const Vec2& input, float dt)
+void DeviceManager::AddDevice(InputDevice* device)
 {
-	Vec2 out;
+    if (!device) return;
 
-	out.x = ProcessAxis(input.x - Config::HALF_AXIS, _acc_x, _sens_x, dt);
-	out.y = ProcessAxis(input.y - Config::HALF_AXIS, _acc_y, _sens_y, dt);
+    struct epoll_event ev_config{};
+    ev_config.events = EPOLLIN;
+    ev_config.data.ptr = device;
 
-	return out;
+    if (epoll_ctl(_epoll_fd, EPOLL_CTL_ADD, device->GetFd(), &ev_config) < 0)
+	{
+        throw std::runtime_error("Failed configuration attachment inside epoll node registry.");
+    }
+}
+
+int DeviceManager::Wait(struct epoll_event* events, int max_events, int timeout_ms)
+{
+    return epoll_wait(_epoll_fd, events, max_events, timeout_ms);
 }

@@ -1,34 +1,33 @@
 /*┌───────────────────────────────────────────────────────────────────────────┐*/
 /*│                                                                           │*/
-/*│  VirtualMouse.hpp                                       ▒▒▒▒    ▒▒▒▒      │*/
+/*│  main.cpp                                               ▒▒▒▒    ▒▒▒▒      │*/
 /*│                                                         ▒▒▒▒    ▒▒▒▒      │*/
 /*│  By: 0xK92JL4                                               ▒▒▒▒          │*/
 /*│                                                           ▒▒▒▒▒▒▒▒        │*/
-/*│  Created: 2026/05/17 00:58:46 by 0xK92JL4                 ▒▒▒▒▒▒▒▒        │*/
-/*│  Updated: 2026/05/24 17:48:16 by 0xK92JL4                 ▒▒    ▒▒        │*/
+/*│  Created: 2026/05/17 00:59:29 by 0xK92JL4                 ▒▒▒▒▒▒▒▒        │*/
+/*│  Updated: 2026/05/31 02:25:24 by 0xK92JL4                 ▒▒    ▒▒        │*/
 /*│                                                                           │*/
 /*└───────────────────────────────────────────────────────────────────────────┘*/
 
-#pragma once
+#include "engine/EventLoop.hpp"
 
-#include "structs.hpp"
-#include <libevdev/libevdev-uinput.h>
+#include <iostream>
+#include <signal.h>
 
-class VirtualMouse
+int main(void)
 {
-	private:
-		struct libevdev_uinput* _uidev = nullptr;
+	signal(SIGCHLD, SIG_IGN);
 
-		void Emit(unsigned int type, unsigned int code, int value);
+	try
+	{
+		EventLoop loop;
+		loop.Run();
+	}
+	catch (const std::exception& e)
+	{
+		std::cerr << e.what() << std::endl;
+		return EXIT_FAILURE;
+	}
 
-	public:
-		VirtualMouse();
-		~VirtualMouse();
-
-		VirtualMouse(const VirtualMouse&) = delete;
-		VirtualMouse& operator=(const VirtualMouse&) = delete;
-
-		void Move(Vec2 move);
-		void Scroll(Vec2 scroll);
-		void SendButton(int virtual_button_code, int value);
-};
+	return EXIT_SUCCESS;
+}

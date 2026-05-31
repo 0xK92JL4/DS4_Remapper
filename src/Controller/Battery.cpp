@@ -5,12 +5,12 @@
 /*│  By: 0xK92JL4                                               ▒▒▒▒          │*/
 /*│                                                           ▒▒▒▒▒▒▒▒        │*/
 /*│  Created: 2026/05/25 14:18:32 by 0xK92JL4                 ▒▒▒▒▒▒▒▒        │*/
-/*│  Updated: 2026/05/27 22:34:12 by 0xK92JL4                 ▒▒    ▒▒        │*/
+/*│  Updated: 2026/05/31 02:30:32 by 0xK92JL4                 ▒▒    ▒▒        │*/
 /*│                                                                           │*/
 /*└───────────────────────────────────────────────────────────────────────────┘*/
 
-#include "Controller/Battery.hpp"
-#include "Config.hpp"
+#include "controller/Battery.hpp"
+#include "core/Config.hpp"
 
 #include <fcntl.h>
 #include <unistd.h>

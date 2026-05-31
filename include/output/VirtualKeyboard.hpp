@@ -1,33 +1,32 @@
 /*┌───────────────────────────────────────────────────────────────────────────┐*/
 /*│                                                                           │*/
-/*│  main.cpp                                               ▒▒▒▒    ▒▒▒▒      │*/
+/*│  VirtualKeyboard.hpp                                    ▒▒▒▒    ▒▒▒▒      │*/
 /*│                                                         ▒▒▒▒    ▒▒▒▒      │*/
 /*│  By: 0xK92JL4                                               ▒▒▒▒          │*/
 /*│                                                           ▒▒▒▒▒▒▒▒        │*/
-/*│  Created: 2026/05/17 00:59:29 by 0xK92JL4                 ▒▒▒▒▒▒▒▒        │*/
-/*│  Updated: 2026/05/30 14:36:35 by 0xK92JL4                 ▒▒    ▒▒        │*/
+/*│  Created: 2026/05/29 18:43:48 by 0xK92JL4                 ▒▒▒▒▒▒▒▒        │*/
+/*│  Updated: 2026/05/31 02:26:29 by 0xK92JL4                 ▒▒    ▒▒        │*/
 /*│                                                                           │*/
 /*└───────────────────────────────────────────────────────────────────────────┘*/
 
-#include "EventLoop.hpp"
+#pragma once
 
-#include <iostream>
-#include <signal.h>
+#include "core/structs.hpp"
+#include <libevdev/libevdev-uinput.h>
 
-int main(void)
+class VirtualKeyboard
 {
-	signal(SIGCHLD, SIG_IGN);
+	private:
+		struct libevdev_uinput* _uidev = nullptr;
 
-	try
-	{
-		EventLoop loop;
-		loop.Run();
-	}
-	catch (const std::exception& e)
-	{
-		std::cerr << e.what() << std::endl;
-		return EXIT_FAILURE;
-	}
+		void Emit(unsigned int type, unsigned int code, int value);
 
-	return EXIT_SUCCESS;
-}
+	public:
+		VirtualKeyboard();
+		~VirtualKeyboard();
+
+		VirtualKeyboard(const VirtualKeyboard&) = delete;
+		VirtualKeyboard& operator=(const VirtualKeyboard&) = delete;
+
+		void SendKey(int virtual_key_code, int value);
+};

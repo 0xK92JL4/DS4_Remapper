@@ -1,85 +1,66 @@
 /*┌───────────────────────────────────────────────────────────────────────────┐*/
 /*│                                                                           │*/
-/*│  EventLoop.cpp                                          ▒▒▒▒    ▒▒▒▒      │*/
+/*│  StickProcessor.cpp                                     ▒▒▒▒    ▒▒▒▒      │*/
 /*│                                                         ▒▒▒▒    ▒▒▒▒      │*/
 /*│  By: 0xK92JL4                                               ▒▒▒▒          │*/
 /*│                                                           ▒▒▒▒▒▒▒▒        │*/
-/*│  Created: 2026/05/17 23:00:54 by 0xK92JL4                 ▒▒▒▒▒▒▒▒        │*/
-/*│  Updated: 2026/05/29 20:19:46 by 0xK92JL4                 ▒▒    ▒▒        │*/
+/*│  Created: 2026/05/17 00:57:52 by 0xK92JL4                 ▒▒▒▒▒▒▒▒        │*/
+/*│  Updated: 2026/05/31 02:27:47 by 0xK92JL4                 ▒▒    ▒▒        │*/
 /*│                                                                           │*/
 /*└───────────────────────────────────────────────────────────────────────────┘*/
 
-#include "EventLoop.hpp"
-#include "Config.hpp"
+#include "engine/StickProcessor.hpp"
+#include "core/Config.hpp"
 
 #include <cmath>
-#include <cerrno>
 
 /*┌───────────────────────────────────────────────────────────────────────────┐*/
 /*│                         Constructor/Destructor                            │*/
 /*└───────────────────────────────────────────────────────────────────────────┘*/
 
-EventLoop::EventLoop()
-{
-	_manager.AddDevice(_controller.GetDs4Device());
-	_manager.AddDevice(_controller.GetTouchpadDevice());
+StickProcessor::StickProcessor(float sensivity_x, float sensivity_y)
+	: _sens_x(sensivity_x)
+	, _sens_y(sensivity_y) {}
 
-	_last_time = std::chrono::steady_clock::now();
-	_battery_last_time = std::chrono::steady_clock::now();
-	_led_last_time = std::chrono::steady_clock::now();
+/*┌───────────────────────────────────────────────────────────────────────────┐*/
+/*│                                Private                                    │*/
+/*└───────────────────────────────────────────────────────────────────────────┘*/
+
+int StickProcessor::ProcessAxis(
+	int raw,
+	float& accumulator,
+	float sensitivity,
+	float dt
+)
+{
+	if (std::abs(raw) <= Config::DEADZONE)
+	{
+		accumulator = 0.0f;
+		return 0;
+	}
+
+	float push_ratio = static_cast<float>(raw - (raw > 0 ? Config::DEADZONE : -Config::DEADZONE))
+		/ (Config::HALF_AXIS - Config::DEADZONE);
+
+	accumulator += push_ratio * sensitivity * dt;
+
+	int delta = static_cast<int>(accumulator);
+
+	accumulator -= delta;
+
+	return delta;
 }
 
 /*┌───────────────────────────────────────────────────────────────────────────┐*/
-/*│                                 Public                                    │*/
+/*│                                Public                                     │*/
 /*└───────────────────────────────────────────────────────────────────────────┘*/
 
-void EventLoop::Run()
+Vec2 StickProcessor::Process(const Vec2& input, float dt)
 {
-	while (true)
-	{
-		int timeout_ms = _controller.HasActiveMovement() ? 2 : 10;
+	Vec2 out;
 
-		int num_ready = _manager.Wait(_returned_events, MAX_EPOLL_EVENTS, timeout_ms);
-		if (num_ready < 0)
-		{
-			if (errno == EINTR) continue;
-			break;
-		}
+	out.x = ProcessAxis(input.x - Config::HALF_AXIS, _acc_x, _sens_x, dt);
+	out.y = ProcessAxis(input.y - Config::HALF_AXIS, _acc_y, _sens_y, dt);
 
-		for (int i = 0; i < num_ready; i++)
-		{
-			auto* device = static_cast<InputDevice*>(_returned_events[i].data.ptr);
-			_controller.HandleDeviceEvent(device, _mouse, _keyboard);
-		}
-
-		auto current_time = std::chrono::steady_clock::now();
-		auto elapsed = current_time - _last_time;
-		float dt = std::chrono::duration<float, std::milli>(elapsed).count();
-		_last_time = current_time;
-
-		if (dt > 100.0f)
-        {
-            dt = 100.0f;
-            _battery_last_time = current_time;
-            _led_last_time = current_time;
-        }
-
-		_controller.Update(dt);
-
-		if (current_time - _battery_last_time >= Config::BATTERY_REFRESH_RATE)
-		{
-			_battery_last_time += Config::BATTERY_REFRESH_RATE;
-			_controller.UpdateBattery();
-		}
-
-		if (current_time - _led_last_time >= Config::LED_REFRESH_RATE)
-		{
-			_led_last_time += Config::LED_REFRESH_RATE;
-			_controller.UpdateLightBar();
-		}
-
-		_mouse.Move(_controller.GetMove());
-		_mouse.Scroll(_controller.GetScroll());
-
-	}
+	return out;
 }
