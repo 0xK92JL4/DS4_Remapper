@@ -1,0 +1,5 @@
+- clean Vmouse and Vkeyboard constructors
+
+- handle ds4 arrow pad + touchpad button
+
+- remove hardcode ds4 sysfs paths with finders
