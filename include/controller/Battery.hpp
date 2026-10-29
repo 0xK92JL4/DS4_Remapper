@@ -20,8 +20,8 @@ class Battery
 		int _fd_capacity = -1;
 		int _fd_status = -1;
 
-		int				_capacity;
-		BatteryStatus	_status;
+		int				_capacity = -1;
+		BatteryStatus	_status = BatteryStatus::Unknown;
 
 		std::string		Read(int fd);
 

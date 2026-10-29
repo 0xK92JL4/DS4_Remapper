@@ -5,7 +5,7 @@
 /*│  By: 0xK92JL4                                               ▒▒▒▒          │*/
 /*│                                                           ▒▒▒▒▒▒▒▒        │*/
 /*│  Created: 2026/05/17 23:00:54 by 0xK92JL4                 ▒▒▒▒▒▒▒▒        │*/
-/*│  Updated: 2026/05/31 02:28:00 by 0xK92JL4                 ▒▒    ▒▒        │*/
+/*│  Updated: 2026/10/29 11:55:22 by 0xK92JL4                 ▒▒    ▒▒        │*/
 /*│                                                                           │*/
 /*└───────────────────────────────────────────────────────────────────────────┘*/
 
@@ -14,6 +14,10 @@
 
 #include <cmath>
 #include <cerrno>
+#include <cstdint>
+#include <stdexcept>
+
+volatile std::sig_atomic_t EventLoop::_stop_requested = 0;
 
 /*┌───────────────────────────────────────────────────────────────────────────┐*/
 /*│                         Constructor/Destructor                            │*/
@@ -33,9 +37,14 @@ EventLoop::EventLoop()
 /*│                                 Public                                    │*/
 /*└───────────────────────────────────────────────────────────────────────────┘*/
 
+void EventLoop::RequestStop()
+{
+	_stop_requested = 1;
+}
+
 void EventLoop::Run()
 {
-	while (true)
+	while (!_stop_requested)
 	{
 		int timeout_ms = _controller.HasActiveMovement() ? 2 : 10;
 
@@ -43,13 +52,19 @@ void EventLoop::Run()
 		if (num_ready < 0)
 		{
 			if (errno == EINTR) continue;
-			break;
+			throw std::runtime_error("epoll_wait failed");
 		}
 
 		for (int i = 0; i < num_ready; i++)
 		{
 			auto* device = static_cast<InputDevice*>(_returned_events[i].data.ptr);
-			_controller.HandleDeviceEvent(device, _mouse, _keyboard);
+			uint32_t revents = _returned_events[i].events;
+
+			if (revents & EPOLLIN)
+				_controller.HandleDeviceEvent(device, _mouse, _keyboard);
+
+			if ((revents & (EPOLLHUP | EPOLLERR)) || device->IsDisconnected())
+				throw std::runtime_error("Input device disconnected");
 		}
 
 		auto current_time = std::chrono::steady_clock::now();

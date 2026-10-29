@@ -16,6 +16,7 @@
 #include <unistd.h>
 #include <stdexcept>
 #include <cstring>
+#include <cstdlib>
 
 /*┌───────────────────────────────────────────────────────────────────────────┐*/
 /*│                          Constructor/Destructor                           │*/
@@ -27,7 +28,13 @@ Battery::Battery()
 	_fd_status = open(Config::BATTERY_STATUS, O_RDONLY);
 
 	if (_fd_capacity < 0 || _fd_status < 0)
+	{
+		if (_fd_capacity >= 0) close(_fd_capacity);
+		if (_fd_status >= 0) close(_fd_status);
 		throw std::runtime_error("Battery: failed to open sysfs files");
+	}
+
+	Update();
 }
 
 Battery::~Battery()

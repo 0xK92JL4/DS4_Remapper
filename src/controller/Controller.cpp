@@ -56,7 +56,8 @@ void Controller::ExecuteAction(const Action& action, int value,
 	switch (action.type)
 	{
 		case ActionType::MouseButton:
-			mouse.SendButton(action.code, value);
+			if (value != Input::REPEAT)
+				mouse.SendButton(action.code, value);
 			break;
 
 		case ActionType::KeyboardKey:

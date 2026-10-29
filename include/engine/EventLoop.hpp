@@ -5,7 +5,7 @@
 /*│  By: 0xK92JL4                                               ▒▒▒▒          │*/
 /*│                                                           ▒▒▒▒▒▒▒▒        │*/
 /*│  Created: 2026/05/17 23:00:29 by 0xK92JL4                 ▒▒▒▒▒▒▒▒        │*/
-/*│  Updated: 2026/05/31 02:26:52 by 0xK92JL4                 ▒▒    ▒▒        │*/
+/*│  Updated: 2026/10/29 11:54:30 by 0xK92JL4                 ▒▒    ▒▒        │*/
 /*│                                                                           │*/
 /*└───────────────────────────────────────────────────────────────────────────┘*/
 
@@ -14,13 +14,17 @@
 #include "controller/Controller.hpp"
 #include "input/DeviceManager.hpp"
 #include "output/VirtualMouse.hpp"
+#include "output/VirtualKeyboard.hpp"
 
 #include <chrono>
+#include <csignal>
 #include <sys/epoll.h>
 
 class EventLoop
 {
 	private:
+		static volatile std::sig_atomic_t	_stop_requested;
+
 		Controller		_controller;
 		DeviceManager	_manager;
 		VirtualKeyboard	_keyboard;
@@ -35,5 +39,8 @@ class EventLoop
 
 	public:
 		EventLoop();
+
+		static void RequestStop();
+
 		void Run();
 };

@@ -5,7 +5,7 @@
 /*│  By: 0xK92JL4                                               ▒▒▒▒          │*/
 /*│                                                           ▒▒▒▒▒▒▒▒        │*/
 /*│  Created: 2026/05/21 23:48:14 by 0xK92JL4                 ▒▒▒▒▒▒▒▒        │*/
-/*│  Updated: 2026/05/31 02:30:36 by 0xK92JL4                 ▒▒    ▒▒        │*/
+/*│  Updated: 2026/10/29 11:56:23 by 0xK92JL4                 ▒▒    ▒▒        │*/
 /*│                                                                           │*/
 /*└───────────────────────────────────────────────────────────────────────────┘*/
 
@@ -14,6 +14,7 @@
 
 #include <fcntl.h>
 #include <unistd.h>
+#include <cstdio>
 #include <stdexcept>
 #include <algorithm>
 #include <string>
@@ -30,7 +31,13 @@ LightBar::LightBar(uint32_t color)
 	_fd_global = open(Config::LED_GLOBAL, O_WRONLY);
 
 	if (_fd_r < 0 || _fd_g < 0 || _fd_b < 0 || _fd_global < 0)
+	{
+		if (_fd_r >= 0) close(_fd_r);
+		if (_fd_g >= 0) close(_fd_g);
+		if (_fd_b >= 0) close(_fd_b);
+		if (_fd_global >= 0) close(_fd_global);
 		throw std::runtime_error("LightBar: failed to open sysfs LED nodes");
+	}
 
 	_color = color;
 	Apply();
@@ -85,7 +92,11 @@ bool LightBar::Apply()
 bool LightBar::Toggle(std::optional<bool> on)
 {
 	_enabled = (on.has_value()) ? *on : !_enabled;
-	return WriteInt(_fd_global, _enabled);
+
+	if (!WriteInt(_fd_global, _enabled))
+		return false;
+
+	return _enabled ? Apply() : true;
 }
 
 bool LightBar::SetBrightness(uint8_t brightness)
@@ -136,7 +147,10 @@ void LightBar::Update()
 	if (now - _last_toggle >= _blink_interval)
 	{
 		Toggle();
+
 		_last_toggle += _blink_interval;
+		if (now - _last_toggle >= _blink_interval)
+			_last_toggle = now;
 
 		if (_blink_cycles > 0)
 		{

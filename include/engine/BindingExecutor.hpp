@@ -9,11 +9,11 @@
 /*│                                                                           │*/
 /*└───────────────────────────────────────────────────────────────────────────┘*/
 
+#pragma once
+
 #include "core/structs.hpp"
 #include "output/VirtualMouse.hpp"
 #include "output/VirtualKeyboard.hpp"
-
-#pragma once
 
 class BindingExecutor
 {

@@ -3,7 +3,7 @@ SRC_DIR   := src
 OBJ_DIR   := .obj
 
 CXX      := c++
-CXXFLAGS := -std=c++17 -Wall -Wextra -O3 -Iinclude $(shell pkg-config --cflags libevdev)
+CXXFLAGS := -std=c++17 -Wall -Wextra -O3 -MMD -MP -Iinclude $(shell pkg-config --cflags libevdev)
 LDFLAGS  := $(shell pkg-config --libs libevdev)
 
 SRCS := $(shell find $(SRC_DIR) -name '*.cpp')
@@ -30,6 +30,8 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp | $(OBJ_DIR)
 	@echo "Compiling $<"
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
+
+-include $(OBJS:.o=.d)
 
 clean:
 	@echo "Cleaning up..."
