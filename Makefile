@@ -50,6 +50,7 @@ run: all
 
 
 install: $(TARGET)
+    @test -x $(TARGET) || { echo "Run 'make' first (as your user), then 'sudo make install'"; exit 1; }
 	install -Dm755 $(TARGET) $(DESTDIR)$(BINDIR)/ds4-remapper
 	install -Dm644 packaging/70-ds4-remapper.rules $(DESTDIR)$(UDEV_RULES_DIR)/70-ds4-remapper.rules
 	install -Dm644 packaging/ds4-remapper.conf $(DESTDIR)$(MODULES_LOAD_DIR)/ds4-remapper.conf
