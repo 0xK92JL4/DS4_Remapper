@@ -5,7 +5,7 @@
 /*│  By: 0xK92JL4                                               ▒▒▒▒          │*/
 /*│                                                           ▒▒▒▒▒▒▒▒        │*/
 /*│  Created: 2026/05/20 21:21:58 by 0xK92JL4                 ▒▒▒▒▒▒▒▒        │*/
-/*│  Updated: 2026/05/31 23:05:52 by 0xK92JL4                 ▒▒    ▒▒        │*/
+/*│  Updated: 2026/10/30 15:53:18 by 0xK92JL4                 ▒▒    ▒▒        │*/
 /*│                                                                           │*/
 /*└───────────────────────────────────────────────────────────────────────────┘*/
 
@@ -14,18 +14,37 @@
 #include "engine/BindingExecutor.hpp"
 #include "core/Config.hpp"
 #include <cmath>
+#include <iostream>
+#include <exception>
 
 /*┌───────────────────────────────────────────────────────────────────────────┐*/
 /*│                          Constructor/Destructor                           │*/
 /*└───────────────────────────────────────────────────────────────────────────┘*/
 
 Controller::Controller(const Ds4Paths& paths)
-	: _lightbar(paths, Config::COLOR)
-	, _battery(paths)
-	, _ds4(paths.gamepad_event, false)
+	: _ds4(paths.gamepad_event, false)
 	, _touchpad(paths.touchpad_event, true)
 	, _mouse_stick(Config::MOUSE_SENS_X, Config::MOUSE_SENS_Y)
-	, _scroll_stick(Config::SCROLL_SENS_X, Config::SCROLL_SENS_Y) {}
+	, _scroll_stick(Config::SCROLL_SENS_X, Config::SCROLL_SENS_Y)
+{
+	try
+    {
+        _lightbar.emplace(paths, Config::COLOR);
+    }
+	catch (const std::exception& e)
+	{
+		std::clog << "LightBar disabled: " << e.what() << std::endl;
+	}
+
+	try
+    {
+        _battery.emplace(paths);
+    }
+	catch (const std::exception& e)
+	{
+		std::clog << "Battery disabled: " << e.what() << std::endl;
+	}
+}
 
 /*┌───────────────────────────────────────────────────────────────────────────┐*/
 /*│                                Private                                    │*/
@@ -47,6 +66,11 @@ void Controller::HandleKeyEvent(const input_event& ev, VirtualMouse& mouse,
 {
 	auto it = Config::InputMap.find(ev.code);
 	if (it == Config::InputMap.end()) return;
+
+	if (ev.value == Input::PRESS)
+		_pressed.insert(ev.code);
+	else if (ev.value == Input::RELEASE)
+		_pressed.erase(ev.code);
 
 	ExecuteAction(it->second, ev.value, mouse, keyboard);
 }
@@ -125,8 +149,31 @@ void Controller::Update(float dt)
 	_scroll = _scroll_stick.Process(right, dt);
 }
 
-void Controller::UpdateLightBar() { _lightbar.Update(); }
-void Controller::UpdateBattery()  { _battery.Update(); }
+void Controller::UpdateLightBar() { if (_lightbar) _lightbar->Update(); }
+void Controller::UpdateBattery()  { if (_battery)  _battery->Update(); }
+
+bool Controller::HasBattery() const { return _battery.has_value(); }
+
+int Controller::GetBatteryCapacity() const
+{
+	return _battery ? _battery->GetCapacity() : -1;
+}
+
+BatteryStatus Controller::GetBatteryStatus() const
+{
+	return _battery ? _battery->GetStatus() : BatteryStatus::Unknown;
+}
+
+void Controller::ReleaseAll(VirtualMouse& mouse, VirtualKeyboard& keyboard)
+{
+	for (int code : _pressed)
+	{
+		auto it = Config::InputMap.find(code);
+		if (it != Config::InputMap.end())
+			ExecuteAction(it->second, Input::RELEASE, mouse, keyboard);
+	}
+	_pressed.clear();
+}
 
 Vec2 Controller::GetMove()  const  { return _move; }
 Vec2 Controller::GetScroll() const { return _scroll; }

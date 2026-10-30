@@ -5,7 +5,7 @@
 /*│  By: 0xK92JL4                                               ▒▒▒▒          │*/
 /*│                                                           ▒▒▒▒▒▒▒▒        │*/
 /*│  Created: 2026/05/19 20:20:08 by 0xK92JL4                 ▒▒▒▒▒▒▒▒        │*/
-/*│  Updated: 2026/05/31 22:59:04 by 0xK92JL4                 ▒▒    ▒▒        │*/
+/*│  Updated: 2026/10/30 15:50:13 by 0xK92JL4                 ▒▒    ▒▒        │*/
 /*│                                                                           │*/
 /*└───────────────────────────────────────────────────────────────────────────┘*/
 
@@ -21,11 +21,14 @@
 
 #include <linux/input.h>
 
+#include <optional>
+#include <unordered_set>
+
 class Controller
 {
 	private:
-		LightBar	_lightbar;
-		Battery		_battery;
+		std::optional<LightBar>	_lightbar;
+		std::optional<Battery>	_battery;
 		InputDevice	_ds4;
 		InputDevice	_touchpad;
 
@@ -39,6 +42,8 @@ class Controller
 
 		Vec2 _move   = {0,0};
 		Vec2 _scroll = {0,0};
+
+		std::unordered_set<int> _pressed;
 
 		void ExecuteAction(const Action&, int value, VirtualMouse&, VirtualKeyboard&);
 		void HandleKeyEvent(const input_event&, VirtualMouse&, VirtualKeyboard&);
@@ -64,4 +69,10 @@ class Controller
 		Vec2	GetScroll() const;
 
 		bool	HasActiveMovement() const;
+
+		void	ReleaseAll(VirtualMouse&, VirtualKeyboard&);
+
+		bool			HasBattery() const;
+		int				GetBatteryCapacity() const;   // -1 if unknown
+		BatteryStatus	GetBatteryStatus() const;
 };

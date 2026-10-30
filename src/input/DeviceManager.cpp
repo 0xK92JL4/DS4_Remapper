@@ -5,7 +5,7 @@
 /*│  By: 0xK92JL4                                               ▒▒▒▒          │*/
 /*│                                                           ▒▒▒▒▒▒▒▒        │*/
 /*│  Created: 2026/05/17 00:58:56 by 0xK92JL4                 ▒▒▒▒▒▒▒▒        │*/
-/*│  Updated: 2026/05/31 02:27:05 by 0xK92JL4                 ▒▒    ▒▒        │*/
+/*│  Updated: 2026/10/30 15:54:55 by 0xK92JL4                 ▒▒    ▒▒        │*/
 /*│                                                                           │*/
 /*└───────────────────────────────────────────────────────────────────────────┘*/
 
@@ -51,6 +51,13 @@ void DeviceManager::AddDevice(InputDevice* device)
 	{
         throw std::runtime_error("Failed configuration attachment inside epoll node registry.");
     }
+}
+
+void DeviceManager::RemoveDevice(InputDevice* device)
+{
+    if (!device) return;
+
+    epoll_ctl(_epoll_fd, EPOLL_CTL_DEL, device->GetFd(), nullptr);
 }
 
 int DeviceManager::Wait(struct epoll_event* events, int max_events, int timeout_ms)

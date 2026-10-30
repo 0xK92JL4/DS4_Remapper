@@ -5,7 +5,7 @@
 /*│  By: 0xK92JL4                                               ▒▒▒▒          │*/
 /*│                                                           ▒▒▒▒▒▒▒▒        │*/
 /*│  Created: 2026/10/29 12:00:00 by 0xK92JL4                 ▒▒▒▒▒▒▒▒        │*/
-/*│  Updated: 2026/10/30 10:19:22 by 0xK92JL4                 ▒▒    ▒▒        │*/
+/*│  Updated: 2026/10/30 15:54:48 by 0xK92JL4                 ▒▒    ▒▒        │*/
 /*│                                                                           │*/
 /*└───────────────────────────────────────────────────────────────────────────┘*/
 
@@ -71,7 +71,6 @@ namespace
 		return s.compare(0, prefix.size(), prefix) == 0;
 	}
 
-	// True if `path` is strictly inside directory `dir`.
 	bool IsUnder(const std::string& path, const std::string& dir)
 	{
 		return path.size() > dir.size()
@@ -79,8 +78,6 @@ namespace
 			&& path[dir.size()] == '/';
 	}
 
-	// HID device directory name: "0003:054C:09CC.0005" (USB)
-	//                         or "0005:054C:09CC.0005" (Bluetooth)
 	bool LooksLikeHidId(const std::string& s)
 	{
 		if (s.size() != 19)
@@ -102,7 +99,6 @@ namespace
 		return true;
 	}
 
-	// /dev/input/event* sorted by event number (event2 before event10).
 	std::vector<std::string> ListEventNodes()
 	{
 		std::vector<std::pair<int, std::string>> nodes;
@@ -129,7 +125,6 @@ namespace
 		return paths;
 	}
 
-	// Opens an event node just long enough to read its identity.
 	std::optional<Candidate> Probe(const std::string& path)
 	{
 		int fd = open(path.c_str(), O_RDONLY | O_NONBLOCK | O_CLOEXEC);
@@ -170,8 +165,6 @@ namespace
 		return result;
 	}
 
-	// /dev/input/eventN -> the HID device directory that owns it, e.g.
-	// /sys/devices/.../0003:054C:09CC.0005. LEDs and battery hang under it.
 	std::string HidDirOf(const std::string& event_path)
 	{
 		std::error_code ec;
@@ -228,8 +221,6 @@ namespace
 
 			const std::string name = real.filename().string();
 
-			// Primary: the supply is a child of our HID device.
-			// Fallback: named "ps-controller-battery-<mac>".
 			const bool by_path = IsUnder(real.string(), hid_dir);
 			const bool by_name = !out.uniq.empty()
 				&& StartsWith(name, BATTERY_PREFIX)
@@ -249,7 +240,7 @@ namespace
 /*│                                   Public                                  │*/
 /*└───────────────────────────────────────────────────────────────────────────┘*/
 
-Ds4Paths DeviceFinder::Find(const std::string& mac_filter)
+Ds4Paths DeviceFinder::Find(const std::string& mac_filter, bool require_sysfs)
 {
 	const std::string wanted = Lower(mac_filter);
 
@@ -262,7 +253,7 @@ Ds4Paths DeviceFinder::Find(const std::string& mac_filter)
 
 	if (found.empty())
 		throw std::runtime_error(
-			"No DualShock 4 found in /dev/input (not connected, or not running as root?)");
+			"No DualShock 4 found in /dev/input (not connected, or no permission on /dev/input?)");
 
 	for (const auto& pad : found)
 	{
@@ -290,12 +281,15 @@ Ds4Paths DeviceFinder::Find(const std::string& mac_filter)
 		FindLeds(hid_dir, out);
 		FindBattery(hid_dir, out);
 
-		if (out.led_r.empty() || out.led_g.empty()
-			|| out.led_b.empty() || out.led_global.empty())
-			throw std::runtime_error("LED sysfs nodes not found under " + hid_dir);
+		if (require_sysfs)
+		{
+			if (out.led_r.empty() || out.led_g.empty()
+				|| out.led_b.empty() || out.led_global.empty())
+				throw std::runtime_error("LED sysfs nodes not found under " + hid_dir);
 
-		if (out.battery_capacity.empty())
-			throw std::runtime_error("Battery sysfs nodes not found under " + hid_dir);
+			if (out.battery_capacity.empty())
+				throw std::runtime_error("Battery sysfs nodes not found under " + hid_dir);
+		}
 
 		std::clog << "DS4 " << out.uniq
 			<< ": gamepad=" << out.gamepad_event
