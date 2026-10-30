@@ -5,7 +5,7 @@
 /*│  By: 0xK92JL4                                               ▒▒▒▒          │*/
 /*│                                                           ▒▒▒▒▒▒▒▒        │*/
 /*│  Created: 2026/05/20 23:29:57 by 0xK92JL4                 ▒▒▒▒▒▒▒▒        │*/
-/*│  Updated: 2026/05/31 23:04:03 by 0xK92JL4                 ▒▒    ▒▒        │*/
+/*│  Updated: 2026/10/30 10:28:35 by 0xK92JL4                 ▒▒    ▒▒        │*/
 /*│                                                                           │*/
 /*└───────────────────────────────────────────────────────────────────────────┘*/
 
@@ -20,6 +20,22 @@ namespace Input
 	constexpr int PRESS   = 1;
 	constexpr int REPEAT  = 2;
 }
+
+struct Ds4Paths
+{
+	std::string	uniq;
+
+	std::string	gamepad_event;
+	std::string	touchpad_event;
+
+	std::string	led_r;
+	std::string	led_g;
+	std::string	led_b;
+	std::string	led_global;
+
+	std::string	battery_capacity;
+	std::string	battery_status;
+};
 
 struct Vec2
 {

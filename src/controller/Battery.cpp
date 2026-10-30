@@ -10,7 +10,6 @@
 /*└───────────────────────────────────────────────────────────────────────────┘*/
 
 #include "controller/Battery.hpp"
-#include "core/Config.hpp"
 
 #include <fcntl.h>
 #include <unistd.h>
@@ -22,10 +21,10 @@
 /*│                          Constructor/Destructor                           │*/
 /*└───────────────────────────────────────────────────────────────────────────┘*/
 
-Battery::Battery()
+Battery::Battery(const Ds4Paths& paths)
 {
-	_fd_capacity = open(Config::BATTERY_CAPACITY, O_RDONLY);
-	_fd_status = open(Config::BATTERY_STATUS, O_RDONLY);
+	_fd_capacity = open(paths.battery_capacity.c_str(), O_RDONLY);
+	_fd_status = open(paths.battery_status.c_str(), O_RDONLY);
 
 	if (_fd_capacity < 0 || _fd_status < 0)
 	{

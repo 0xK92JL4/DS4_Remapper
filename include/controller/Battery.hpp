@@ -12,6 +12,7 @@
 #pragma once
 
 #include "BatteryStatus.hpp"
+#include "core/structs.hpp"
 #include <string>
 
 class Battery
@@ -29,7 +30,7 @@ class Battery
 		BatteryStatus	ParseStatus(const std::string& s);
 
 	public:
-		Battery();
+		explicit Battery(const Ds4Paths& paths);
 		~Battery();
 
 		void			Update();

@@ -11,6 +11,7 @@
 
 #include "engine/EventLoop.hpp"
 #include "core/Config.hpp"
+#include "input/DeviceFinder.hpp"
 
 #include <cmath>
 #include <cerrno>
@@ -24,6 +25,7 @@ volatile std::sig_atomic_t EventLoop::_stop_requested = 0;
 /*└───────────────────────────────────────────────────────────────────────────┘*/
 
 EventLoop::EventLoop()
+	: _controller(DeviceFinder::Find(Config::DS4_MAC))
 {
 	_manager.AddDevice(_controller.GetDs4Device());
 	_manager.AddDevice(_controller.GetTouchpadDevice());

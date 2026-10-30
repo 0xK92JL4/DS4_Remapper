@@ -19,10 +19,11 @@
 /*│                          Constructor/Destructor                           │*/
 /*└───────────────────────────────────────────────────────────────────────────┘*/
 
-Controller::Controller()
-	: _lightbar(Config::COLOR)
-	, _ds4(Config::DS4_DEVICE, false)
-	, _touchpad(Config::TOUCHPAD_DEVICE, true)
+Controller::Controller(const Ds4Paths& paths)
+	: _lightbar(paths, Config::COLOR)
+	, _battery(paths)
+	, _ds4(paths.gamepad_event, false)
+	, _touchpad(paths.touchpad_event, true)
 	, _mouse_stick(Config::MOUSE_SENS_X, Config::MOUSE_SENS_Y)
 	, _scroll_stick(Config::SCROLL_SENS_X, Config::SCROLL_SENS_Y) {}
 

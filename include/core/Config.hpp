@@ -5,7 +5,7 @@
 /*│  By: 0xK92JL4                                               ▒▒▒▒          │*/
 /*│                                                           ▒▒▒▒▒▒▒▒        │*/
 /*│  Created: 2026/05/17 00:58:04 by 0xK92JL4                 ▒▒▒▒▒▒▒▒        │*/
-/*│  Updated: 2026/10/29 11:54:04 by 0xK92JL4                 ▒▒    ▒▒        │*/
+/*│  Updated: 2026/10/30 10:27:44 by 0xK92JL4                 ▒▒    ▒▒        │*/
 /*│                                                                           │*/
 /*└───────────────────────────────────────────────────────────────────────────┘*/
 
@@ -37,25 +37,13 @@ namespace Config
 		"/usr/bin/sh", "-c",
 
 		"pgrep -x svkbd-en >/dev/null && pkill -x svkbd-en"
-		" || svkbd-en -g 1536x356+192+400 >/dev/null 2>&1 &"
+		" || svkbd-en -g 1246x356 >/dev/null 2>&1 &"
 	};
 
 	constexpr auto BATTERY_REFRESH_RATE = std::chrono::seconds(10);
 	constexpr auto LED_REFRESH_RATE = std::chrono::milliseconds(50);
  
-	// grep -H . /sys/class/input/event*/device/name
-    inline const char* const DS4_DEVICE = "/dev/input/event21";
-    inline const char* const TOUCHPAD_DEVICE = "/dev/input/event23";
-
-	inline const char* const LED_R =      "/sys/class/leds/input22:red/brightness";
-	inline const char* const LED_G =      "/sys/class/leds/input22:green/brightness";
-	inline const char* const LED_B =      "/sys/class/leds/input22:blue/brightness";
-	inline const char* const LED_GLOBAL = "/sys/class/leds/input22:global/brightness";
-
-	inline const char* const BATTERY_CAPACITY
-		= "/sys/class/power_supply/ps-controller-battery-28:c1:3c:48:43:83/capacity";
-	inline const char* const BATTERY_STATUS
-		= "/sys/class/power_supply/ps-controller-battery-28:c1:3c:48:43:83/status";
+    inline const std::string DS4_MAC = "";
 
 	inline constexpr auto MouseButton = Action::MouseButton;
     inline constexpr auto KeyboardKey = Action::KeyboardKey;

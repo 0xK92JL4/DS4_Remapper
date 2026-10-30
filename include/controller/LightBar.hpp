@@ -11,6 +11,8 @@
 
 #pragma once
 
+#include "core/structs.hpp"
+
 #include <optional>
 #include <cstdint>
 #include <chrono>
@@ -38,7 +40,7 @@ class LightBar
 		bool Apply();
 
 	public:
-		LightBar(uint32_t color);
+		LightBar(const Ds4Paths& paths, uint32_t color);
 		~LightBar();
 
 		bool SetColor(uint32_t color);

@@ -45,7 +45,7 @@ class Controller
 		void HandleAbsEvent(const input_event& ev);
 
 	public:
-		Controller();
+		explicit Controller(const Ds4Paths& paths);
 		~Controller() = default;
 
 		Controller(const Controller&) = delete;

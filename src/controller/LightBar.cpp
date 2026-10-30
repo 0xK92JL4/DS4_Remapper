@@ -10,7 +10,6 @@
 /*└───────────────────────────────────────────────────────────────────────────┘*/
 
 #include "controller/LightBar.hpp"
-#include "core/Config.hpp"
 
 #include <fcntl.h>
 #include <unistd.h>
@@ -23,12 +22,12 @@
 /*│                          Constructor/Destructor                           │*/
 /*└───────────────────────────────────────────────────────────────────────────┘*/
 
-LightBar::LightBar(uint32_t color)
+LightBar::LightBar(const Ds4Paths& paths, uint32_t color)
 {
-	_fd_r = open(Config::LED_R, O_WRONLY);
-	_fd_g = open(Config::LED_G, O_WRONLY);
-	_fd_b = open(Config::LED_B, O_WRONLY);
-	_fd_global = open(Config::LED_GLOBAL, O_WRONLY);
+	_fd_r = open(paths.led_r.c_str(), O_WRONLY);
+	_fd_g = open(paths.led_g.c_str(), O_WRONLY);
+	_fd_b = open(paths.led_b.c_str(), O_WRONLY);
+	_fd_global = open(paths.led_global.c_str(), O_WRONLY);
 
 	if (_fd_r < 0 || _fd_g < 0 || _fd_b < 0 || _fd_global < 0)
 	{
