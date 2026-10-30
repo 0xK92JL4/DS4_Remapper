@@ -1,0 +1,11 @@
+[Unit]
+Description=DualShock 4 remapper
+StartLimitIntervalSec=0
+
+[Service]
+ExecStart=@BINDIR@/ds4-remapper
+Restart=on-failure
+RestartSec=2
+
+[Install]
+WantedBy=default.target

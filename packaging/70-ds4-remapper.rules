@@ -1,0 +1,13 @@
+# --- DS4 evdev nodes (gamepad, touchpad, motion sensors) ---
+# "uaccess" gives the active local session an ACL on the node; no group needed.
+# Vendor 054c = Sony; products: DS4 v1, DS4 v2, USB wireless adapter.
+SUBSYSTEM=="input", KERNEL=="event[0-9]*", ATTRS{id/vendor}=="054c", ATTRS{id/product}=="05c4|09cc|0ba0", TAG+="uaccess"
+
+# --- Lightbar LEDs (sysfs) ---
+# sysfs files cannot take "uaccess", so make only the lightbar brightness
+# files writable (they only control the controller's light).
+SUBSYSTEM=="leds", SUBSYSTEMS=="hid", DRIVERS=="playstation", KERNEL=="*:red|*:green|*:blue|*:global", RUN+="/bin/chmod a+w /sys%p/brightness"
+
+# --- uinput: needed to create the virtual mouse/keyboard ---
+# static_node makes the node exist (and get tagged) before the module loads.
+KERNEL=="uinput", SUBSYSTEM=="misc", OPTIONS+="static_node=uinput", TAG+="uaccess"
